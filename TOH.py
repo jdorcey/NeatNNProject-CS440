@@ -4,19 +4,23 @@ Created on Thu Nov 30 11:25:14 2017
 
 @author: Tom Shaw
 """
-from copy import deepcopy
+from copy import deepcopy 
 
 class TOH: #towers of Hanoi puzzle
     def __init__(self, n=3):
         self.n = n
-        self.state = [[1,2,3],[],[]]
+        numDisks = []
+        for i in range(1, n + 1):
+            numDisks.append(i)
+        self.state = [numDisks,[],[]]
+        self.goalState = [[],[], numDisks]
         self.moves = 0
         #optimal moves calculation
         self.optimalMoves = ((2**n)-1)
         
     def __repr__(self):
-        printState()
-        return
+        self.printState()
+        return ""
         
     def printState(self):
         lens = [len(p) for p in self.state]
@@ -30,6 +34,12 @@ class TOH: #towers of Hanoi puzzle
             print(row)
         print('------')
         print()
+        
+    def goalTest(self, currState):
+        if(currState == self.goalState):
+            return True
+        return False
+        
         
     def validMoves(self):
         """Given state like [[1,2,3],[],[]]

@@ -8,6 +8,14 @@ import Qnet
 from TOH import TOH
 
 def main():
+    
+    toh = TOH(4)
+    print(toh)
+    
+    currState = [[], [1], [2, 3, 4]]
+    print(toh.goalTest(currState))
+    
+    '''
     hiddenLayers = [40]
     nReplays = 0
     nIterations = 10
@@ -17,7 +25,7 @@ def main():
     toh = TOH()
     qnet, outcomes, samples = Qnet.trainQnet(300, hiddenLayers, nIterations, nReplays, 
                                     epsilon, epsilonDecayFactor, toh.validMoves, toh.makeMove)
-    
+    '''
     
 if __name__ == "__main__":
     main()
