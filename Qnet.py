@@ -2,22 +2,22 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 import neuralnetworks as nn
+from copy import deepcopy
 
-
-def epsilonGreedy(Qnet, state, epsilon, validMovesF):
-    moves = validMovesF(state)
+def epsilonGreedy(Qnet, epsilon, toh):
+    moves = toh.validMoves()
     if np.random.uniform() < epsilon: # random move
         move = moves[random.sample(range(len(moves)),1)[0]]
-        Q = Qnet.use(np.array([newStateRep(state) + move])) if Qnet.Xmeans is not None else 0
+        Q = Qnet.use(np.array([toh.newStateRep() + move])) if Qnet.Xmeans is not None else 0
     else:                           # greedy move
         qs = []
         for m in moves:
-            qs.append(Qnet.use(np.array([newStateRep(state) + m])) if Qnet.Xmeans is not None else 0)
+            qs.append(Qnet.use(np.array([toh.newStateRep() + m])) if Qnet.Xmeans is not None else 0)
         move = moves[np.argmax(qs)]
         Q = np.max(qs)
     return move, Q
 	
-def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, validMovesF, makeMoveF):
+def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, toh):
     outcomes = np.zeros(nReps)
     Qnet = nn.NeuralNetwork(5, hiddenLayers, 1)
     Qnet._standardizeT = lambda x: x
@@ -35,16 +35,16 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
         samplesNextStateForReplay = []
         
         state = [[1,2,3],[],[]]
-        move, _ = epsilonGreedy(Qnet, state, epsilon, validMovesF)
+        move, _ = epsilonGreedy(Qnet, epsilon, toh)
  
         while not done:
             step += 1
             
            # Make this move to get to nextState
-            stateNext = makeMoveF(state, move)
+            stateNext = toh.makeMove(move)
             r = -1
             # Choose move from nextState
-            moveNext, Qnext = epsilonGreedy(Qnet, stateNext, epsilon, validMovesF)
+            moveNext, Qnext = epsilonGreedy(Qnet, epsilon, toh)
  
             if len(stateNext[2]) == 3:
                 # goal found
@@ -52,10 +52,10 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
                 done = True
                 outcomes[rep] = step
                 if rep%10 == 0 or rep == nReps-1:
-                    print('rep={:d} epsilon={:.3f} steps={:d}'.format(rep,epsilon, int(outcomes[rep])), end=', ')
+                    print('rep={:d} epsilon={:.3f} steps={:d}'.format(rep, epsilon, int(outcomes[rep])), end=', ')
                
-            samples.append([*newStateRep(state), *move, r, Qnext])
-            samplesNextStateForReplay.append([*newStateRep(stateNext), *moveNext])
+            samples.append([*toh.newStateRep(), *move, r, Qnext])
+            samplesNextStateForReplay.append([*toh.newStateRep(), *moveNext])
 
             state = deepcopy(stateNext)
             move = deepcopy(moveNext)

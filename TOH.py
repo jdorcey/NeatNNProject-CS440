@@ -35,12 +35,6 @@ class TOH: #towers of Hanoi puzzle
         print('------')
         print()
         
-    def goalTest(self, currState):
-        if(currState == self.goalState):
-            return True
-        return False
-        
-        
     def validMoves(self):
         """Given state like [[1,2,3],[],[]]
         return valid moves, like [(1,2),(1,3)]) pairs of source and dest peg"""
@@ -67,17 +61,19 @@ class TOH: #towers of Hanoi puzzle
         return moves
     
     def makeMove(self, move):
-        from copy import deepcopy
         stateNew = deepcopy(self.state)
         src,dest = move
         diskMoved = stateNew[src-1].pop(0)
         stateNew[dest-1].insert(0,diskMoved)
         #increment number of moves made in this problem
         self.moves += 1
-        return stateNew
+        self.state = stateNew
+        return self.state
     
-    def goaltest(self):
-        pass
+    def goalTest(self):
+        if(self.state == self.goalState):
+            return True
+        return False
     
     def percentCorrect(self):
         #pecent complete is how many disks there are on the goal peg over the total number
@@ -100,3 +96,16 @@ class TOH: #towers of Hanoi puzzle
             #if game hasn't completed determine how 
             score += percentCorrect()*100
         return score
+    
+    def newStateRep(self):
+        newrep = []
+        for i in range(1, self.n + 1):
+            newrep.append(0)    
+        for pegi, peglist in enumerate(self.state):
+            for disk in peglist:
+                newrep[disk - 1] = pegi + 1
+        return newrep
+
+    def allMoves(self):
+        return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
+        
