@@ -41,3 +41,6 @@ class Neuron:
         for i in range(len(self.out)):
             self.out[i].shareValue(self.outindex[i], self.sum)
         return
+    
+    def getValue(self):
+        return self.value
