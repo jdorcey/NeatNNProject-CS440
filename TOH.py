@@ -7,8 +7,12 @@ Created on Thu Nov 30 11:25:14 2017
 from copy import deepcopy
 
 class TOH: #towers of Hanoi puzzle
-    def __init__(self):
+    def __init__(self, n=3):
+        self.n = n
         self.state = [[1,2,3],[],[]]
+        self.moves = 0
+        #optimal moves calculation
+        self.optimalMoves = ((2**n)-1)
         
     def __repr__(self):
         printState()
@@ -58,13 +62,31 @@ class TOH: #towers of Hanoi puzzle
         src,dest = move
         diskMoved = stateNew[src-1].pop(0)
         stateNew[dest-1].insert(0,diskMoved)
+        #increment number of moves made in this problem
+        self.moves += 1
         return stateNew
     
-    def newStateRep(self):
-        newrep = [0, 0, 0]
-        for pegi, peglist in enumerate(self.state):
-            for disk in peglist:
-                newrep[disk-1] = pegi+1
-        return newrep
+    def goaltest(self):
+        pass
     
+    def percentCorrect(self):
+        #pecent complete is how many disks there are on the goal peg over the total number
+        return len(self.state[2])/self.n
     
+    #fitness should be called on a state after NN has run on it
+    #this function will determine the fitness to be used by the training algorithm
+    def fitness(self):
+        score = 0
+        #max score is 1100
+        if(goaltest()):
+            #if game completed add 100 points
+            #will automatically make a network that completes the game more fit
+            #than a network that hasn't finished
+            score +=100 
+            #higher fitness for less moves moves
+            #max score for optimal moves
+            score += (optimalMoves/actualMoves) * 1000 
+        else:
+            #if game hasn't completed determine how 
+            score += percentCorrect()*100
+        return score
