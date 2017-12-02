@@ -1,63 +1,9 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from copy import deepcopy
 import neuralnetworks as nn
 
-def printState(s):
-    lens = [len(p) for p in s]
-    for height in range(max(lens),0,-1):
-        row = ""
-        for p in range(3):
-            if lens[p] >= height:
-                row += str(s[p][lens[p]-height]) + ' '
-            else:
-                row += '  '
-        print(row)
-    print('------')
-    print()
-    
-def validMoves(state):
-    """Given state like [[1,2,3],[],[]]
-    return valid moves, like [(1,2),(1,3)]) pairs of source and dest peg"""
-    moves = []
-    disksOn1,disksOn2,disksOn3 = state
-    if disksOn1:
-        diskToMove = disksOn1[0]
-        if not disksOn2 or disksOn2[0] > diskToMove:
-            moves.append([1,2])
-        if not disksOn3 or disksOn3[0] > diskToMove:
-            moves.append([1,3])
-    if disksOn2:
-        diskToMove = disksOn2[0]
-        if not disksOn1 or disksOn1[0] > diskToMove:
-            moves.append([2,1])
-        if not disksOn3 or disksOn3[0] > diskToMove:
-            moves.append([2,3])
-    if disksOn3:
-        diskToMove = disksOn3[0]
-        if not disksOn1 or disksOn1[0] > diskToMove:
-            moves.append([3,1])
-        if not disksOn2 or disksOn2[0] > diskToMove:
-            moves.append([3,2])
-    return moves
 
-def makeMove(state, move):
-    from copy import deepcopy
-    stateNew = deepcopy(state)
-    src,dest = move
-    diskMoved = stateNew[src-1].pop(0)
-    stateNew[dest-1].insert(0,diskMoved)
-    return stateNew
-
-
-def newStateRep(state):
-    newrep = [0, 0, 0]
-    for pegi, peglist in enumerate(state):
-        for disk in peglist:
-            newrep[disk-1] = pegi+1
-    return newrep
-	
 def epsilonGreedy(Qnet, state, epsilon, validMovesF):
     moves = validMovesF(state)
     if np.random.uniform() < epsilon: # random move
@@ -143,16 +89,4 @@ def plotSteps(outcomes, avgOf=1):
     plt.ylabel('Steps to Reach Goal')
     plt.legend();
 	
-def main():
-	hiddenLayers = [40]
-	nReplays = 0
-	nIterations = 10
-	epsilon = 0.5
-	epsilonDecayFactor = 0.99
-	nReplays = 0
-	Qnet, outcomes, samples = trainQnet(300, hiddenLayers, nIterations, nReplays, 
-                                    epsilon, epsilonDecayFactor, validMoves, makeMove)
-    
-    
-if __name__ == "__main__":
-    main()
+
