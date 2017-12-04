@@ -91,6 +91,8 @@ class NeuralNetwork:
 
     def use(self,X,allOutputs=False):
         Xst = self._standardizeX(X)
+        print("Xst")
+        print(Xst)
         Y,Z = self._forward_pass(Xst)
         Y = self._unstandardizeT(Y)
         if Z is None:
