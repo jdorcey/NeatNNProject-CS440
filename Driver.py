@@ -2,7 +2,7 @@
 """
 Created on Thu Nov 30 12:32:10 2017
 
-@author: Tom Shaw
+@author: Tom Shaw and Jennifer Dorcey
 """
 import Qnet
 from TOH import TOH
