@@ -1,10 +1,8 @@
-
 import numpy as np
 import scaledconjugategradient as scg
 import mlutils as ml  # for draw()
 from copy import copy
 import sys  # for sys.float_info.epsilon
-import pdb
 
 ######################################################################
 ### class NeuralNetwork
@@ -24,11 +22,9 @@ class NeuralNetwork:
         if nhs is not None:
             self.Vs = [(np.random.uniform(-1,1,size=(1+nihs[i],nihs[i+1])) / np.sqrt(nihs[i]))  for i in range(len(nihs)-1)]
             self.W = np.zeros((1+nhs[-1],no))
-            # self.W = (np.random.uniform(-1,1,size=(1+nhs[-1],no)) / np.sqrt(nhs[-1]))
         else:
             self.Vs = None
             self.W = np.zeros((1+ni,no))
-            # self.W = 0*np.random.uniform(-1,1,size=(1+ni,no)) / np.sqrt(ni)
         self.ni,self.nhs,self.no = ni,nhs,no
         self.Xmeans = None
         self.Xstds = None
@@ -62,7 +58,6 @@ class NeuralNetwork:
         T = self._standardizeT(T)
 
         # Local functions used by scg()
-
         def objectiveF(w):
             self._unpack(w)
             Y,_ = self._forward_pass(X)
@@ -143,12 +138,15 @@ class NeuralNetwork:
         result = (X - self.Xmeans) / self.XstdsFixed
         # result[:,self.Xconstant] = 0.0
         return result
+    
     def _unstandardizeX(self,Xs):
         return self.Xstds * Xs + self.Xmeans
+    
     def _standardizeT(self,T):
         result = (T - self.Tmeans) / self.TstdsFixed
         # result[:,self.Tconstant] = 0.0
         return result
+    
     def _unstandardizeT(self,Ts):
         return self.Tstds * Ts + self.Tmeans
    
@@ -172,7 +170,6 @@ class NeuralNetwork:
 
     def __repr__(self):
         str = 'NeuralNetwork({}, {}, {})'.format(self.ni,self.nhs,self.no)
-        # str += '  Standardization parameters' + (' not' if self.Xmeans == None else '') + ' calculated.'
         if self.trained:
             str += '\n   Network was trained for {} iterations. Final error is {}.'.format(self.numberOfIterations,
                                                                                            self.errorTrace[-1])
@@ -192,14 +189,12 @@ def makeIndicatorVars(T):
 class NeuralNetworkClassifier(NeuralNetwork):
 
     def __init__(self,ni,nhs,no):
-        #super(NeuralNetworkClassifier,self).__init__(ni,nh,no)
         NeuralNetwork.__init__(self,ni,nhs,no)
 
     def _multinomialize(self,Y):
         # fix to avoid overflow
         mx = max(0,np.max(Y))
         expY = np.exp(Y-mx)
-        # print('mx',mx)
         denom = np.sum(expY,axis=1).reshape((-1,1)) + sys.float_info.epsilon
         Y = expY / denom
         return Y
