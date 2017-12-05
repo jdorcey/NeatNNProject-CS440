@@ -15,22 +15,10 @@ def main():
     epsilon = 0.5
     epsilonDecayFactor = 0.99
     nReplays = 0
-    toh = TOH(3)
-    
-    '''
-    moves = toh.validMoves()
-    if np.random.uniform() < epsilon: # random move
-        move = moves[random.sample(range(len(moves)),1)[0]]
-        print(move)
-        lis = np.array(toh.newStateRep() + move)
-        ls.shape
-        print(lis)
-    
-    '''
-    
+    toh = TOH(6)
+     
     qnet, outcomes, samples = Qnet.trainQnet(300, hiddenLayers, nIterations, nReplays, 
                                     epsilon, epsilonDecayFactor, toh)
-    
- 
+       
 if __name__ == "__main__":
     main()

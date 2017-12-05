@@ -19,10 +19,10 @@ def epsilonGreedy(Qnet, epsilon, toh):
 	
 def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, toh):
     outcomes = np.zeros(nReps)
-    Qnet = nn.NeuralNetwork(5, hiddenLayers, 1)
+    n = toh.n + 2
+    Qnet = nn.NeuralNetwork(n, hiddenLayers, 1)
     Qnet._standardizeT = lambda x: x
     Qnet._unstandardizeT = lambda x: x
-    # epsilon = 1.0
 
     samples = []  # collect all samples for this repetition, then update the Q network at end of repetition.
     for rep in range(nReps):
@@ -34,48 +34,43 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
         samples = []
         samplesNextStateForReplay = []
         
-        state = [[1,2,3],[],[]]
         move, _ = epsilonGreedy(Qnet, epsilon, toh)
  
         while not done:
             step += 1
             
-           # Make this move to get to nextState
-            stateNext = toh.makeMove(move)
+           # Make this move to update toh.state
+            toh.makeMove(move)
             r = -1
-            # Choose move from nextState
+            
+            # Choose move from updated toh.state
             moveNext, Qnext = epsilonGreedy(Qnet, epsilon, toh)
  
-            if len(stateNext[2]) == 3:
+            if len(toh.state[2]) == 3:
                 # goal found
                 Qnext = 0
                 done = True
                 outcomes[rep] = step
-                if rep%10 == 0 or rep == nReps-1:
-                    print('rep={:d} epsilon={:.3f} steps={:d}'.format(rep, epsilon, int(outcomes[rep])), end=', ')
+                if rep % 10 == 0 or rep == nReps - 1:
+                    print('rep= {:d} epsilon= {:.3f} steps= {:d}'.format(rep, epsilon, int(outcomes[rep])), end=', ')
                
             samples.append([*toh.newStateRep(), *move, r, Qnext])
             samplesNextStateForReplay.append([*toh.newStateRep(), *moveNext])
-
-            state = deepcopy(stateNext)
+            
             move = deepcopy(moveNext)
             
         samples = np.array(samples)
-        X = samples[:,:5]
-        T = samples[:,5:6] + samples[:,6:7]
+        n = toh.n + 2
+        X = samples[:,:n]
+        T = samples[:,n:n+1] + samples[:,n+1:n+2]
         Qnet.train(X, T, nIterations, verbose=False)
 
         # Experience Replay: Train on recent samples with updates to Qnext.
         samplesNextStateForReplay = np.array(samplesNextStateForReplay)
         for replay in range(nReplays):
-            # for sample, stateNext in zip(samples, samplesNextStateForReplay):
-                # moveNext, Qnext = epsilonGreedy(Qnet, stateNext, epsilon, validMovesF)
-                # sample[6] = Qnext
-            # print('before',samples[:5,6])
-            QnextNotZero = samples[:,6] != 0
-            samples[QnextNotZero, 6:7] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
-            # print('after',samples[:5,6])
-            T = samples[:,5:6] + samples[:,6:7]
+            QnextNotZero = samples[:,n+1] != 0
+            samples[QnextNotZero, n+1:n+2] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
+            T = samples[:,n+1:n+2] + samples[:,n+1:n+2]
             Qnet.train(X, T, nIterations, verbose=False)
 
     print('DONE')

@@ -2,11 +2,12 @@
 """
 Created on Thu Nov 30 11:25:14 2017
 
-@author: Tom Shaw
+@author: Tom Shaw and Jennifer Dorcey
 """
 from copy import deepcopy 
 
-class TOH: #towers of Hanoi puzzle
+class TOH: 
+    #towers of Hanoi puzzle
     def __init__(self, n=3):
         self.n = n
         numDisks = []
@@ -37,7 +38,7 @@ class TOH: #towers of Hanoi puzzle
         
     def validMoves(self):
         """Given state like [[1,2,3],[],[]]
-        return valid moves, like [(1,2),(1,3)]) pairs of source and dest peg"""
+        return valid moves, like ([(1,2),(1,3)]) pairs of source and dest pegs"""
         moves = []
         disksOn1,disksOn2,disksOn3 = self.state
         if disksOn1:
@@ -75,6 +76,18 @@ class TOH: #towers of Hanoi puzzle
             return True
         return False
     
+    def newStateRep(self):
+        newrep = []
+        for i in range(1, self.n + 1):
+            newrep.append(0)    
+        for pegi, peglist in enumerate(self.state):
+            for disk in peglist:
+                newrep[disk - 1] = pegi + 1
+        return newrep
+
+    def allMoves(self):
+        return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
+    
     def percentCorrect(self):
         #pecent complete is how many disks there are on the goal peg over the total number
         return len(self.state[2])/self.n
@@ -97,15 +110,5 @@ class TOH: #towers of Hanoi puzzle
             score += percentCorrect()*100
         return score
     
-    def newStateRep(self):
-        newrep = []
-        for i in range(1, self.n + 1):
-            newrep.append(0)    
-        for pegi, peglist in enumerate(self.state):
-            for disk in peglist:
-                newrep[disk - 1] = pegi + 1
-        return newrep
-
-    def allMoves(self):
-        return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
+    
         
