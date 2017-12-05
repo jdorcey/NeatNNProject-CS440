@@ -9,3 +9,12 @@ class neat:
     def __init__(self):
         pass
     
+    def runNetworks(self):
+        pass
+    
+    def breedNetworks(self):
+        pass
+    
+    def mutateNetworks(self):
+        pass
+    
