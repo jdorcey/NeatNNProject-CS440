@@ -18,7 +18,7 @@ def main():
     nReplays = 0
     toh = TOH(6)
     #tfe = TwentyFortyEight()
-    
+    '''
     
     #time training
     startTrainTime = time.time()
@@ -42,7 +42,7 @@ def main():
     
     tfe.randomTile()
     print(tfe)
-    for i in range(10):
+    for i in range(50):
         moves = tfe.ValidMoves()
         print(moves)
         move = random.choice(moves)
@@ -51,6 +51,6 @@ def main():
     
         print(tfe)
         
-   '''
+   
 if __name__ == "__main__":
     main()

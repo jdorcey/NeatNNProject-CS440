@@ -116,20 +116,33 @@ class TwentyFortyEight:
     # Create new tile in randomly selected spot, should be 2 90% of the time
     #and 4 10% of the time      
     def randomTile(self):
-        positions = []
-        for row in range(4):
-            for col in range(4):
-                if self.state[row][col] == 0:
-                    positions.append([row, col])
-        if not positions:
-            print("NO AVAILABLE POSITIONS")
-        else:
+        if not self.gameover():
+            positions = []
+            for row in range(4):
+                for col in range(4):
+                    if self.state[row][col] == 0:
+                        positions.append([row, col])
             randomT = random.choice(positions)
             choices = [(2, 9), (4, 1)]
             population = [v for v, c in choices for i in range(c)]
             tile = random.choice(population)
             self.state[randomT[0]][randomT[1]] = tile
-    
+        else:
+            print("GAME OVER")
+            self.reset()
+            
+    #check if game is over
+    def gameover(self):
+        positions = []
+        for row in range(4):
+            for col in range(4):
+                if self.state[row][col] == 0:
+                    positions.append([row, col])
+        if positions:
+            return False
+        else:
+            return True
+        
     #Reset game so grid is empty
     def reset(self):
         self.state = [[0 for col in range(4)] for row in range(4)]
