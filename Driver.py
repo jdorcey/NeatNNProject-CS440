@@ -8,8 +8,7 @@ import time
 import random
 
 def main():
-   
-    
+
     hiddenLayers = [40]
     nReplays = 0
     nIterations = 10
@@ -51,6 +50,5 @@ def main():
     
         print(tfe)
         
-   
 if __name__ == "__main__":
     main()
