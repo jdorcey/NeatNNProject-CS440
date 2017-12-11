@@ -8,8 +8,7 @@ import time
 import random
 
 def main():
-   
-    
+
     hiddenLayers = [40]
     nReplays = 0
     nIterations = 10
@@ -49,9 +48,13 @@ def main():
         tfe.makeMove(k)
         print("MAKE MOVE")
         print(tfe)
+<<<<<<< HEAD
      
     print(tfe) 
     '''
    
+=======
+        
+>>>>>>> b4897c4c694d2f4ae9fdbe2a06688489182abb3e
 if __name__ == "__main__":
     main()

@@ -177,9 +177,6 @@ class NeuralNetwork:
             str += '  Network is not trained.'
         return str
             
-
-
-
 ######################################################################
 ### Test code, not run when this file is imported
 ######################################################################
