@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 30 11:25:14 2017
+#@author: Tom Shaw and Jennifer Dorcey
 
-@author: Tom Shaw and Jennifer Dorcey
-"""
 from copy import deepcopy 
 
 class TOH: 
     #towers of Hanoi puzzle
-    def __init__(self, n=3):
+    def __init__(self, n = 3):
         self.n = n
         numDisks = []
         for i in range(1, n + 1):
