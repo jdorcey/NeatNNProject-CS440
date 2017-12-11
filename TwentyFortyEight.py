@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+#@author: Jennifer Dorcey
+
 import random     
 
 UP = 1
@@ -11,31 +14,32 @@ OFFSETS = {UP: (1, 0),
            LEFT: (0, 1), 
            RIGHT: (0, -1)} 
   
-#Move all non-zero tiles to the left 
 def mergeRow(row):
     nonzeros = []
     newRow = []
     merged = False
     
+    #Move all non-zero tiles to the left and append 0's
     for tile in row:
         if tile != 0:
             nonzeros.append(tile)
 
     while len(nonzeros) != len(row):
         nonzeros.append(0)
-        
-    #Double tiles
+             
+    #Double tile is neighbor is same value   
     for tile in range(0, len(nonzeros) - 1):
-        merged = False
         if nonzeros[tile] == nonzeros[tile + 1] and merged == False:
             newRow.append(2 * nonzeros[tile])
             merged = True
         elif nonzeros[tile] != nonzeros[tile + 1] and merged == False:
             newRow.append(nonzeros[tile])
-    
+        elif merged == True:
+            merged = False
+
     if nonzeros[-1] != 0 and merged == False:
         newRow.append(nonzeros[-1])
-
+        
     while len(newRow) != len(nonzeros):
         newRow.append(0)
 
@@ -55,31 +59,54 @@ class TwentyFortyEight:
             RIGHT : [[tile, 3] for tile in range (4)]
         }
             
-    # Print game grid
+    # Print game 
     def __str__(self):
         for row in range(0, 4):
             print(self.state[row])
         return ""
     
-    def ValidMoves(self):
+    def validMoves(self):
         moves = []
-        for row in range(0, 3):
-            for col in range(0,3):
+        
+        for row in range(1, 4):
+            for col in range(0,4):
                 if self.state[row][col] == self.state[row -1][col] and 1 not in moves:
                     moves.append(1)
+                if self.state[row -1][col] == 0 and 1 not in moves:
+                    moves.append(1)
+                    
+        for row in range(0, 3):
+            for col in range(0,4):
                 if self.state[row][col] == self.state[row +1][col] and 2 not in moves:
                     moves.append(2)
+                if self.state[row +1][col] == 0 and 2 not in moves:
+                    moves.append(2)
+        
+        for row in range(0, 4):
+            for col in range(1,4):
                 if self.state[row][col] == self.state[row][col -1] and 3 not in moves:
                     moves.append(3)
+                if self.state[row][col -1] == 0 and 3 not in moves:
+                    moves.append(3)
+                    
+        for row in range(0, 4):
+            for col in range(0,3):          
                 if self.state[row][col] == self.state[row][col +1] and 4 not in moves:
                     moves.append(4)
-        return moves
+                if self.state[row][col +1] == 0 and 4 not in moves:
+                    moves.append(4)  
+              
+        if self.gameOver(moves):
+            print("NO MORE MOVES! GAME OVER, RESETTING GAME!")
+            return self.reset()
+        else:
+            return moves
     
     # Move tiles in the given direction and add new tile if any tiles moved
     def makeMove(self, move):
         initial = self.initial[move]
-        temp = []
-
+        temp = []     
+        
         if(move == UP):
             self.moveHelper(initial, move, temp)
         elif(move == DOWN):
@@ -91,57 +118,48 @@ class TwentyFortyEight:
             
     def moveHelper(self, initial, move, temp):
         # Move all columns and merge
-        before = str(self.state)
+        beforeMove = str(self.state)
 
         for element in initial:
             temp.append(element)
-            indices = []
+            row = []
 
-            for index in range(1, 4):
+            for i in range(1, 4):
                 temp.append([x + y for x, y in zip(temp[-1], OFFSETS[move])])
-            
-            for index in temp:
-                indices.append(self.state[index[0]][index[1]])
-            
-            merged = mergeRow(indices)       
+             
+            for i in temp:
+                row.append(self.state[i[0]][i[1]])
+
+            merged = mergeRow(row)
+
             for x, y in zip(merged, temp):
-                self.state[y[0]][y[1]] = x
-        
-            temp = []    
-        after = str(self.state)
-        
-        if before != after:
+                self.state[y[0]][y[1]] = x    
+            temp = []  
+            
+        afterMove = str(self.state)
+        if beforeMove != afterMove:
             self.randomTile()       
 
     # Create new tile in randomly selected spot, should be 2 90% of the time
     #and 4 10% of the time      
     def randomTile(self):
-        if not self.gameover():
-            positions = []
-            for row in range(4):
-                for col in range(4):
-                    if self.state[row][col] == 0:
-                        positions.append([row, col])
-            randomT = random.choice(positions)
-            choices = [(2, 9), (4, 1)]
-            population = [v for v, c in choices for i in range(c)]
-            tile = random.choice(population)
-            self.state[randomT[0]][randomT[1]] = tile
-        else:
-            print("GAME OVER")
-            self.reset()
-            
-    #check if game is over
-    def gameover(self):
         positions = []
         for row in range(4):
             for col in range(4):
                 if self.state[row][col] == 0:
                     positions.append([row, col])
-        if positions:
-            return False
-        else:
+        randomT = random.choice(positions)
+        choices = [(2, 9), (4, 1)]
+        population = [v for v, c in choices for i in range(c)]
+        tile = random.choice(population)
+        self.state[randomT[0]][randomT[1]] = tile
+            
+    #check if game is over
+    def gameOver(self, moves):
+        if len(moves) == 0:
             return True
+        else:
+            return False
         
     #Reset game so grid is empty
     def reset(self):
