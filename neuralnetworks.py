@@ -1,10 +1,8 @@
-
 import numpy as np
 import scaledconjugategradient as scg
 import mlutils as ml  # for draw()
 from copy import copy
 import sys  # for sys.float_info.epsilon
-import pdb
 
 ######################################################################
 ### class NeuralNetwork
@@ -24,11 +22,9 @@ class NeuralNetwork:
         if nhs is not None:
             self.Vs = [(np.random.uniform(-1,1,size=(1+nihs[i],nihs[i+1])) / np.sqrt(nihs[i]))  for i in range(len(nihs)-1)]
             self.W = np.zeros((1+nhs[-1],no))
-            # self.W = (np.random.uniform(-1,1,size=(1+nhs[-1],no)) / np.sqrt(nhs[-1]))
         else:
             self.Vs = None
             self.W = np.zeros((1+ni,no))
-            # self.W = 0*np.random.uniform(-1,1,size=(1+ni,no)) / np.sqrt(ni)
         self.ni,self.nhs,self.no = ni,nhs,no
         self.Xmeans = None
         self.Xstds = None
@@ -41,7 +37,6 @@ class NeuralNetwork:
 
     def train(self,X,T,nIterations=100,verbose=False,
               weightPrecision=0,errorPrecision=0):
-        
         if self.Xmeans is None:
             self.Xmeans = X.mean(axis=0)
             self.Xstds = X.std(axis=0)
@@ -62,7 +57,6 @@ class NeuralNetwork:
         T = self._standardizeT(T)
 
         # Local functions used by scg()
-
         def objectiveF(w):
             self._unpack(w)
             Y,_ = self._forward_pass(X)
@@ -143,12 +137,15 @@ class NeuralNetwork:
         result = (X - self.Xmeans) / self.XstdsFixed
         # result[:,self.Xconstant] = 0.0
         return result
+    
     def _unstandardizeX(self,Xs):
         return self.Xstds * Xs + self.Xmeans
+    
     def _standardizeT(self,T):
         result = (T - self.Tmeans) / self.TstdsFixed
         # result[:,self.Tconstant] = 0.0
         return result
+    
     def _unstandardizeT(self,Ts):
         return self.Tstds * Ts + self.Tmeans
    
@@ -172,7 +169,6 @@ class NeuralNetwork:
 
     def __repr__(self):
         str = 'NeuralNetwork({}, {}, {})'.format(self.ni,self.nhs,self.no)
-        # str += '  Standardization parameters' + (' not' if self.Xmeans == None else '') + ' calculated.'
         if self.trained:
             str += '\n   Network was trained for {} iterations. Final error is {}.'.format(self.numberOfIterations,
                                                                                            self.errorTrace[-1])
@@ -180,92 +176,6 @@ class NeuralNetwork:
             str += '  Network is not trained.'
         return str
             
-
-######################################################################
-### class NeuralNetworkClassifier
-######################################################################
-
-def makeIndicatorVars(T):
-    """ Assumes argument is N x 1, N samples each being integer class label """
-    return (T == np.unique(T)).astype(int)
-
-class NeuralNetworkClassifier(NeuralNetwork):
-
-    def __init__(self,ni,nhs,no):
-        #super(NeuralNetworkClassifier,self).__init__(ni,nh,no)
-        NeuralNetwork.__init__(self,ni,nhs,no)
-
-    def _multinomialize(self,Y):
-        # fix to avoid overflow
-        mx = max(0,np.max(Y))
-        expY = np.exp(Y-mx)
-        # print('mx',mx)
-        denom = np.sum(expY,axis=1).reshape((-1,1)) + sys.float_info.epsilon
-        Y = expY / denom
-        return Y
-
-    def train(self,X,T,
-                 nIterations=100,weightPrecision=0,errorPrecision=0,verbose=False):
-        if self.Xmeans is None:
-            self.Xmeans = X.mean(axis=0)
-            self.Xstds = X.std(axis=0)
-            self.Xconstant = self.Xstds == 0
-            self.XstdsFixed = copy(self.Xstds)
-            self.XstdsFixed[self.Xconstant] = 1
-        X = self._standardizeX(X)
-
-        self.classes, counts = np.unique(T,return_counts=True)
-        self.mostCommonClass = self.classes[np.argmax(counts)]  # to break ties
-
-        if self.no != len(self.classes):
-            raise ValueError(" In NeuralNetworkClassifier, the number of outputs must equal\n the number of classes in the training data. The given number of outputs\n is %d and number of classes is %d. Try changing the number of outputs in the\n call to NeuralNetworkClassifier()." % (self.no, len(self.classes)))
-        T = makeIndicatorVars(T)
-
-        # Local functions used by gradientDescent.scg()
-        def objectiveF(w):
-            self._unpack(w)
-            Y,_ = self._forward_pass(X)
-            Y = self._multinomialize(Y)
-            Y[Y==0] = sys.float_info.epsilon
-            return -np.mean(T * np.log(Y))
-
-        def gradF(w):
-            self._unpack(w)
-            Y,Z = self._forward_pass(X)
-            Y = self._multinomialize(Y)
-            delta = (Y - T) / (X.shape[0] * (T.shape[1]))
-            dVs,dW = self._backward_pass(delta,Z)
-            return self._pack(dVs,dW)
-
-        scgresult = scg.scg(self._pack(self.Vs,self.W), objectiveF, gradF,
-                            xPrecision = weightPrecision,
-                            fPrecision = errorPrecision,
-                            nIterations = nIterations,
-                            ftracep=True,
-                            verbose=verbose)
-
-        self._unpack(scgresult['x'])
-        self.reason = scgresult['reason']
-        self.errorTrace = scgresult['ftrace']
-        self.numberOfIterations = len(self.errorTrace) - 1
-        self.trained = True
-        return self
-    
-    def use(self,X,allOutputs=False):
-        Xst = self._standardizeX(X)
-        Y,Z = self._forward_pass(Xst)
-        Y = self._multinomialize(Y)
-        classes = self.classes[np.argmax(Y,axis=1)].reshape((-1,1))
-        # If any row has all equal values, then all classes have same probability.
-        # Let's return the most common class in these cases
-        classProbsEqual = (Y == Y[:,0:1]).all(axis=1)
-        if sum(classProbsEqual) > 0:
-            classes[classProbsEqual] = self.mostCommonClass
-        if Z is None:
-            return (classes,Y,None) if allOutputs else classes
-        else:
-            return (classes,Y,Z[1:]) if allOutputs else classes
-
 ######################################################################
 ### Test code, not run when this file is imported
 ######################################################################
@@ -389,34 +299,3 @@ if __name__== "__main__":
         plt.setp(plt.xticks()[1], rotation=30)
         plt.ylabel('Mean RMSE')
         plt.xlabel('Network Architecture')
-
-        
-    print( '\n------------------------------------------------------------')
-    print( "Classification Example: XOR, approximate f(x1,x2) = x1 xor x2")
-    print( '                        Using neural net with 2 inputs, 3 hidden units, 2 outputs')
-    X = np.array([[0,0],[1,0],[0,1],[1,1]])
-    T = np.array([[1],[2],[2],[1]])
-    nnet = NeuralNetworkClassifier(2,(4,),2)
-    nnet.train(X,T,weightPrecision=1.e-10,errorPrecision=1.e-10,nIterations=100)
-    print( "scg stopped after",nnet.getNumberOfIterations(),"iterations:",nnet.reason)
-    (classes,y,Z) = nnet.use(X, allOutputs=True)
-    
-
-    print( 'X(x1,x2), Target Classses, Predicted Classes')
-    print( np.hstack((X,T,classes)))
-
-    print( "Hidden Outputs")
-    print( Z)
-    
-    plt.figure(3)
-    plt.clf()
-    plt.subplot(2,1,1)
-    plt.plot(np.exp(-nnet.getErrorTrace()))
-    plt.xlabel('Iterations');
-    plt.ylabel('Likelihood')
-    plt.title('Classification Example')
-    plt.subplot(2,1,2)
-    nnet.draw(['x1','x2'],['xor'])
-
-    
-        

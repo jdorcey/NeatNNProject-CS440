@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 30 11:25:14 2017
-
-@author: Tom Shaw
-"""
 from copy import deepcopy
 
-class TOH: #towers of Hanoi puzzle
-    def __init__(self, n=3):
+class TOH:
+    #Towers of Hanoi game puzzle
+    def __init__(self, n = 3):
         self.n = n
         numDisks = []
         for i in range(1, n + 1):
@@ -18,11 +13,8 @@ class TOH: #towers of Hanoi puzzle
         #optimal moves calculation
         self.optimalMoves = ((2**n)-1)
 
+    #Prints game state
     def __repr__(self):
-        self.printState()
-        return ""
-
-    def printState(self):
         lens = [len(p) for p in self.state]
         for height in range(max(lens),0,-1):
             row = ""
@@ -33,19 +25,14 @@ class TOH: #towers of Hanoi puzzle
                     row += '  '
             print(row)
         print('------')
-        print()
 
-    def goalTest(self, currState):
-        if(currState == self.goalState):
-            return True
-        return False
+        return ""
 
-
+    #Returns a list of legal moves the current game state can make
     def validMoves(self):
-        """Given state like [[1,2,3],[],[]]
-        return valid moves, like [(1,2),(1,3)]) pairs of source and dest peg"""
         moves = []
         disksOn1,disksOn2,disksOn3 = self.state
+
         if disksOn1:
             diskToMove = disksOn1[0]
             if not disksOn2 or disksOn2[0] > diskToMove:
@@ -64,43 +51,77 @@ class TOH: #towers of Hanoi puzzle
                 moves.append([3,1])
             if not disksOn2 or disksOn2[0] > diskToMove:
                 moves.append([3,2])
+
         return moves
 
+    #How the current game state changes
     def makeMove(self, move):
-        from copy import deepcopy
         stateNew = deepcopy(self.state)
         src,dest = move
         diskMoved = stateNew[src-1].pop(0)
         stateNew[dest-1].insert(0,diskMoved)
         #increment number of moves made in this problem
         self.moves += 1
-        return stateNew
+        self.state = stateNew
 
-    def goaltest(self):
-        pass
+        return self.state
 
+    #Check if game is over
+    def gameOver(self):
+        if(self.state == self.goalState):
+            self.reset()
+            return True
+
+        return False
+
+    #Returns the input size used by Neural Networks
+    def inputSize(self):
+        return self.n + 2
+
+    #Another way of representing the games state
+    def newStateRep(self):
+        newRep = []
+        for i in range(1, self.n + 1):
+            newRep.append(0)
+
+        for pegi, peglist in enumerate(self.state):
+            for disk in peglist:
+                newRep[disk - 1] = pegi + 1
+
+        return newRep
+
+    #Reset game state so a new game can be played
+    def reset(self):
+        numDisks = []
+        for i in range(1, self.n + 1):
+            numDisks.append(i)
+
+        self.state = [numDisks,[],[]]
+        self.moves = 0
+
+    #Returns all the moves that can be made in the game
+    def allMoves(self):
+        return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
+
+    #Calculates how close the game is to being completed
     def percentCorrect(self):
-        #pecent complete is how many disks there are on the goal peg over the total number
+        #How many disks there are on the goal peg/ the total number of disks
         return len(self.state[2])/self.n
 
-    #fitness should be called on a state after NN has run on it
-    #this function will determine the fitness to be used by the training algorithm
+    #Determines the fitness to be used by the training algorithm
     def fitness(self):
+        #fitness should be called on a state after NN has run on it
         score = 0
         #max score is 1100
-        if(goaltest()):
+        if self.gameOver():
             #if game completed add 100 points
             #will automatically make a network that completes the game more fit
             #than a network that hasn't finished
-            score +=100
+            score += 100
             #higher fitness for less moves moves
             #max score for optimal moves
-            score += (optimalMoves/actualMoves) * 1000
+            score += (self.optimalMoves/self.moves) * 1000
         else:
             #if game hasn't completed determine how
-            score += percentCorrect()*100
+            score += self.percentCorrect() * 100
         return score
-
-    # this method returns the highest fitness a network can achieve
-    def getOptimal(self):
-        return 1100

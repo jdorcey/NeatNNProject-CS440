@@ -1,28 +1,27 @@
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 import neuralnetworks as nn
+from copy import deepcopy
 
-
-def epsilonGreedy(Qnet, state, epsilon, validMovesF):
-    moves = validMovesF(state)
+def epsilonGreedy(Qnet, epsilon, game):
+    moves = game.validMoves()
     if np.random.uniform() < epsilon: # random move
-        move = moves[random.sample(range(len(moves)),1)[0]]
-        Q = Qnet.use(np.array([newStateRep(state) + move])) if Qnet.Xmeans is not None else 0
+        move = moves[random.choice(range(len(moves)))]
+        Q = Qnet.use(np.array([game.newStateRep() + move])) if Qnet.Xmeans is not None else 0
     else:                           # greedy move
         qs = []
         for m in moves:
-            qs.append(Qnet.use(np.array([newStateRep(state) + m])) if Qnet.Xmeans is not None else 0)
+            qs.append(Qnet.use(np.array([game.newStateRep() + m])) if Qnet.Xmeans is not None else 0)
         move = moves[np.argmax(qs)]
         Q = np.max(qs)
     return move, Q
 	
-def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, validMovesF, makeMoveF):
+def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, game):
     outcomes = np.zeros(nReps)
-    Qnet = nn.NeuralNetwork(5, hiddenLayers, 1)
+    n = game.inputSize()
+    Qnet = nn.NeuralNetwork(n, hiddenLayers, 1)
     Qnet._standardizeT = lambda x: x
     Qnet._unstandardizeT = lambda x: x
-    # epsilon = 1.0
 
     samples = []  # collect all samples for this repetition, then update the Q network at end of repetition.
     for rep in range(nReps):
@@ -30,63 +29,46 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
             epsilon *= epsilonDecayFactor
         step = 0
         done = False
-
         samples = []
         samplesNextStateForReplay = []
         
-        state = [[1,2,3],[],[]]
-        move, _ = epsilonGreedy(Qnet, state, epsilon, validMovesF)
- 
-        while not done:
+        move, _ = epsilonGreedy(Qnet, epsilon, game)
+
+        while not done:     
             step += 1
             
-           # Make this move to get to nextState
-            stateNext = makeMoveF(state, move)
+           # Make this move to update game.state
+            game.makeMove(move)
             r = -1
-            # Choose move from nextState
-            moveNext, Qnext = epsilonGreedy(Qnet, stateNext, epsilon, validMovesF)
- 
-            if len(stateNext[2]) == 3:
+            
+            # Choose move from updated game.state
+            moveNext, Qnext = epsilonGreedy(Qnet, epsilon, game)
+
+            if game.gameOver():
                 # goal found
                 Qnext = 0
                 done = True
                 outcomes[rep] = step
-                if rep%10 == 0 or rep == nReps-1:
-                    print('rep={:d} epsilon={:.3f} steps={:d}'.format(rep,epsilon, int(outcomes[rep])), end=', ')
-               
-            samples.append([*newStateRep(state), *move, r, Qnext])
-            samplesNextStateForReplay.append([*newStateRep(stateNext), *moveNext])
-
-            state = deepcopy(stateNext)
+                
+                if rep % 10 == 0 or rep == nReps - 1:
+                    print('rep = {:d}, epsilon = {:.3f}, steps = {:d}'.format(rep, epsilon, int(outcomes[rep])), end=';\n')
+                   
+            samples.append([*game.newStateRep(), *move, r, Qnext])
+            samplesNextStateForReplay.append([*game.newStateRep(), *moveNext])
             move = deepcopy(moveNext)
             
         samples = np.array(samples)
-        X = samples[:,:5]
-        T = samples[:,5:6] + samples[:,6:7]
+        X = samples[:,:n]
+        T = samples[:,n:n+1] + samples[:,n+1:n+2]
         Qnet.train(X, T, nIterations, verbose=False)
 
         # Experience Replay: Train on recent samples with updates to Qnext.
         samplesNextStateForReplay = np.array(samplesNextStateForReplay)
         for replay in range(nReplays):
-            # for sample, stateNext in zip(samples, samplesNextStateForReplay):
-                # moveNext, Qnext = epsilonGreedy(Qnet, stateNext, epsilon, validMovesF)
-                # sample[6] = Qnext
-            # print('before',samples[:5,6])
-            QnextNotZero = samples[:,6] != 0
-            samples[QnextNotZero, 6:7] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
-            # print('after',samples[:5,6])
-            T = samples[:,5:6] + samples[:,6:7]
+            QnextNotZero = samples[:, n +1] != 0
+            samples[QnextNotZero, n +1:n +2] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
+            T = samples[:, n +1:n +2] + samples[:, n +1:n +2]
             Qnet.train(X, T, nIterations, verbose=False)
 
-    print('DONE')
+    print('TRAINING COMPLETE')
     return Qnet, outcomes, samples
-	
-def plotSteps(outcomes, avgOf=1):
-    outcomes = outcomes.reshape((-1,avgOf)).mean(1)
-    plt.plot(outcomes,'o-', label='RL Agent')
-    plt.plot([0, len(outcomes)], [7, 7], 'r--', label='Shortest')
-    plt.xlabel('Bins of {} repetitions'.format(avgOf))
-    plt.ylabel('Steps to Reach Goal')
-    plt.legend();
-	
-
