@@ -21,7 +21,7 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
     outcomes = np.zeros(nReps)
     
     
-    n = game.n + 2
+    n = game.inputSize()
     Qnet = nn.NeuralNetwork(n, hiddenLayers, 1)
     Qnet._standardizeT = lambda x: x
     Qnet._unstandardizeT = lambda x: x
@@ -37,7 +37,6 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
         samplesNextStateForReplay = []
         
         move, _ = epsilonGreedy(Qnet, epsilon, game)
- 
         while not done:
             step += 1
             
@@ -48,13 +47,14 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
             # Choose move from updated toh.state
             moveNext, Qnext = epsilonGreedy(Qnet, epsilon, game)
  
-            if len(game.state[2]) == 3:
+            if game.gameOver():
                 # goal found
                 Qnext = 0
                 done = True
                 outcomes[rep] = step
+                
                 if rep % 10 == 0 or rep == nReps - 1:
-                    print('rep= {:d} epsilon= {:.3f} steps= {:d}'.format(rep, epsilon, int(outcomes[rep])), end=', ')
+                    print('rep= {:d} epsilon= {:.3f} steps= {:d}'.format(rep, epsilon, int(outcomes[rep])), end='\n')
                
             samples.append([*game.newStateRep(), *move, r, Qnext])
             samplesNextStateForReplay.append([*game.newStateRep(), *moveNext])
@@ -62,7 +62,6 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
             move = deepcopy(moveNext)
             
         samples = np.array(samples)
-        n = game.n + 2
         X = samples[:,:n]
         T = samples[:,n:n+1] + samples[:,n+1:n+2]
         Qnet.train(X, T, nIterations, verbose=False)

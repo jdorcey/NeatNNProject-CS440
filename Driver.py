@@ -11,22 +11,22 @@ def main():
 
     hiddenLayers = [40]
     nReplays = 0
-    nIterations = 10
-    epsilon = 0.5
-    epsilonDecayFactor = 0.99
+    nIterations = 2
+    epsilon = 0.8
+    epsilonDecayFactor = 0.95
     nReplays = 0
-    #toh = TOH(6)
+    toh = TOH(6)
     tfe = TwentyFortyEight()
     
     
     #time training
     startTrainTime = time.time()
     print("START TRAIN: ", startTrainTime)
-    qnet, outcomes, samples = Qnet.trainQnet(300, hiddenLayers, nIterations, nReplays, 
+    qnet, outcomes, samples = Qnet.trainQnet(5, hiddenLayers, nIterations, nReplays, 
                                     epsilon, epsilonDecayFactor, tfe)
     endTrainTime = time.time() - startTrainTime
-    print("EBD TRAIN: ", endTrainTime)
-    
+    print("END TRAIN: ", endTrainTime)
+    '''
     #time testing
     #startTestTime = time.time()
     
@@ -35,26 +35,8 @@ def main():
     '''
     
 
-    tfe = TwentyFortyEight()
-   
     
-    tfe.randomTile()
-    print(tfe)
     
-    while tfe.validMoves():
-        print(tfe.validMoves())
-        k = random.choice(tfe.validMoves())
-        print(k)
-        tfe.makeMove(k)
-        print("MAKE MOVE")
-        print(tfe)
-<<<<<<< HEAD
-     
-    print(tfe) 
-    '''
-   
-=======
-        
->>>>>>> b4897c4c694d2f4ae9fdbe2a06688489182abb3e
+ 
 if __name__ == "__main__":
     main()
