@@ -4,11 +4,11 @@ Created on Sat Dec  2 13:33:44 2017
 
 @author: Tom Shaw and Jenn Dorcey
 """
+import copy
 
 
 class Neat:
     def __init__(self, problem):
-        # TODO write constructor
         global Name = 0
         self.problem = problem
         self.networks = []
@@ -31,14 +31,17 @@ class Neat:
 
     # This method is for testing the current champion
     def test(self):
-        # TODO add this in
-        pass
+        chamption = self.chooseChampion()
+        champion.runNetwork()
+        # TODO add results
+        return
 
     # This method runs all the currently generated networks
     # TODO make this concurrent
     def runNetworks(self):
-        # TODO write this in
-        pass
+        for net in self.networks:
+            net.runNetwork()
+        return
 
     # this method is resposible for breeding all the current networks
     def breedNetworks(self):
@@ -69,29 +72,67 @@ class Neat:
     # this method sorts networks based on their fitness
     # highest fitnesses have the lower indexes
     def sortNetworks(self):
-        # TODO write this in
+        tupleNets = [(net.fitness) for net in self.networks]
+        tupleNets.sort(key=lambda x: x[0], reverse=True)
+        # REVIEW might need to be net[1] for net in tupleNets
+        self.networks = [net for fit, net in tupleNets]
         pass
 
-    # this method is for breeding two individual networks
+    # this method is for breeding two individual networks\
+    # has a .6 chance for keeping a neuron if that neuron isnt already kept
+    # attempts to keep all weights associated with that neuron
     def breedTwo(self, indexOne, indexTwo):
-        # TODO write this in
-        pass
+        newNetwork = NeatNeuralNetwork(copy.deepcopy(self.problem))
+        # get neurons
+        newNeurons = []
+        newNeurons = self.getNeurons(self.networks[indexOne], newNeurons)
+        newNeurons = newNeurons + self.getNeurons(self.networks[indexTwo], newNeurons)
+        # add neurons to network
+        for neuron in newNeurons:
+            newNetwork.addNeuron(neuron)
+        # Make sure connections are valid
+        newNetwork.checkConnections()
+        self.networks.append(newNetwork)
+        return
+
+    # helper method that adds neurons to a list with a .6 chance
+    # ignores the first and last layers as they are special cases
+    def getNeurons(self, net, new):
+        for i in range(1, len(net.network) - 1):
+            for j in range(len(net.network)):
+                if self.neruonInList(net.network[i][j], newNeurons):
+                    if r.uniform(0, 1) < .6:
+                        newNeurons.append(net.network[i][j])
+        return newNeurons
+
+    # a helper function that checks if a neuron is in a list
+    # checks based off of neurons name
+    def neruonInList(self, neuron, listOfNeurons):
+        for neurons in listOfNeurons:
+            if neuron.name == neurons.name:
+                return True
+        return False
 
     # this method is for signaling networks to mutate
     # ignores the champion
     def mutateNetworks(self, iterations):
-        # TODO write this in
-        pass
+        for j in range(1, len(self.networks)):
+            for i in range(iterations):
+                self.networks[j].mutate()
+        return
 
     # generates an inital set of networks
     # these networks are starting from scratch
     # so they need to be highly mutated at the start
     def generateInitalPopulation(self):
-        # TODO write this in
-        pass
+        for i in range(100):
+            newNetwork = NeatNeuralNetwork(copy.deepcopy(problem))
+            self.networks.append(newNetwork)
+        self.mutateNetworks(10)
+        return
 
-    # This method selects the most successful
+    # This method selects the highest fitness
     # network from the current generation
     def chooseChampion(self):
-        # TODO add this in
-        pass
+        self.sortNetworks()
+        return self.networks[0]

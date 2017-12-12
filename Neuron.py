@@ -53,7 +53,7 @@ class Neuron:
     def calculate(self):
         sum = 0
         for i in range(len(self.w)):
-            sum += (self.w[i]*self.v[i])
+            sum += (self.w[i] * self.v[i])
         self.value = sum
         return
 
@@ -76,9 +76,9 @@ class Neuron:
     def cWeight(self, index, toggle):
         self.weight = w[index]
         if toggle:
-            weight = ((weight + 1)/2)
+            weight = ((weight + 1) / 2)
         else:
-            weight = ((weight - 1)/2)
+            weight = ((weight - 1) / 2)
         self.w[index] = weight
         return
 

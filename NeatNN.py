@@ -14,6 +14,37 @@ class NeatNeuralNetwork:
     def __init__(self, problem):
         self.problem = problem
         self.network = [[len(problem.input)], [len(problem.allMoves)]]
+        # TODO create input neurons and output neurons automatically
+        self.neuronNames = []
+
+    def runNetwork(self):
+        while not self.problem.gameOver():
+            self.calculate()
+            move = self.chooseMove()
+            if move == -1:
+                break
+            else:
+                self.makeMove(move)
+        pass
+
+    def chooseMove(self):
+        # TODO add this in
+        values = []
+        for neuron in self.network[-1]:
+            values.append(neuron.getValue())
+        if self.checkZeros(values):
+            return -1
+        # TODO here
+
+    def checkZeros(self, values):
+        for i in values:
+            if i != 0:
+                return False
+        return True
+
+    def makeMove(self, move):
+        # TODO add this in
+        pass
 
     # calculates the value of each neuron and passes it to the next layer
     # returns the value of the last layer of neurons
@@ -53,12 +84,13 @@ class NeatNeuralNetwork:
         else:
             y3 = len(self.network[x3])
         new = Neuron(Name, x3, y3)
+        self.neuronNames.append(Name)
         Name += 1
         # add in neuron to the right place
         if x3 == x1:
-            self.network.insert(x1+1, new)
+            self.network.insert(x1 + 1, new)
         elif x3 == x2:
-            self.network.insert(x2-1, new)
+            self.network.insert(x2 - 1, new)
         else:
             self.network.insert(x3, new)
         # add in new weights
@@ -67,11 +99,35 @@ class NeatNeuralNetwork:
         fromNeuron.removeNeuron(toNeuron)
         return
 
+    # a method that adds a neuron that is already created to the network
+    def addNeuron(self, neuron):
+        names.append(neuron.name)
+        x = neuron.nnlayer
+        # check if network is long enough for x
+        while len(self.network) < x + 1:
+            self.network.insert(-2, [])
+        # add neuron to the layer it expects to be in
+        self.network[-2].append(neuron)
+        return
+
+    # checks that all connections are valid inside the network
+    def checkConnections(self):
+        for i in range(len(self.network) - 1):
+            for j in range(len(self.network[i])):
+                self.checkWeights(self.network[i][j])
+        return
+
+    def checkWeights(self, neuron):
+        for x in neuron.getWeights:
+            if x[0].name is not in self.neuronNames:
+                neuron.removeNeuron(x[0])
+        remove
+
     # adds a gene to a random neuron-neuron combination
     def addWeight(self):
         # get the from neuron
         fromNeurons = []
-        for i in range(len(self.network)-1):
+        for i in range(len(self.network) - 1):
             for j in range(len(self.network[i])):
                 fromNeurons.append[self.network[i][j]]
         # get to neuron
