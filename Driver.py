@@ -5,7 +5,6 @@ import Qnet
 from TOH import TOH
 from TwentyFortyEight import TwentyFortyEight
 import time
-#import random
 
 def main():
 

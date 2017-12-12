@@ -61,7 +61,7 @@ class TwentyFortyEight:
         #self.randomTile()
             
     # Print game 
-    def __str__(self):
+    def __repr__(self):
         for row in range(0, 4):
             print(self.state[row])
         return ""
