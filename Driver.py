@@ -18,27 +18,27 @@ def main():
     toh = TOH()
     tfe = TwentyFortyEight()
     tfe.randomTile()
-    
-    
-    
+
+
+
     #time training
     startTrainTime = time.time()
     print("START TRAIN: ", startTrainTime)
-    qnet, outcomes, samples = Qnet.trainQnet(5, hiddenLayers, nIterations, nReplays, 
+    qnet, outcomes, samples = Qnet.trainQnet(5, hiddenLayers, nIterations, nReplays,
                                     epsilon, epsilonDecayFactor, tfe)
     endTrainTime = time.time() - startTrainTime
     print("END TRAIN: ", endTrainTime)
-    
+
     #time testing
     #startTestTime = time.time()
-    
-    
-    #endTestTime = time.time() - startTestTime
-    
-    
 
-    
-    
- 
+
+    #endTestTime = time.time() - startTestTime
+
+
+
+
+
+
 if __name__ == "__main__":
     main()
