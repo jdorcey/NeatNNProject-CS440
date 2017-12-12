@@ -96,32 +96,32 @@ class TOH:
         for i in range(1, self.n + 1):
             numDisks.append(i)
 
-        self.state = [numDisks,[],[]]
+        self.state = [numDisks, [], []]
         self.moves = 0
 
-    #Returns all the moves that can be made in the game
+    # Returns all the moves that can be made in the game
     def allMoves(self):
         return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
 
-    #Calculates how close the game is to being completed
+    # Calculates how close the game is to being completed
     def percentCorrect(self):
-        #How many disks there are on the goal peg/ the total number of disks
-        return len(self.state[2])/self.n
+        # How many disks there are on the goal peg/ the total number of disks
+        return len(self.state[2]) / self.n
 
-    #Determines the fitness to be used by the training algorithm
+    # Determines the fitness to be used by the training algorithm
     def fitness(self):
-        #fitness should be called on a state after NN has run on it
+        # fitness should be called on a state after NN has run on it
         score = 0
-        #max score is 1100
+        # max score is 1100
         if self.gameOver():
-            #if game completed add 100 points
-            #will automatically make a network that completes the game more fit
-            #than a network that hasn't finished
+            # if game completed add 100 points
+            # will automatically make a network that completes the game more fit
+            # than a network that hasn't finished
             score += 100
-            #higher fitness for less moves moves
-            #max score for optimal moves
-            score += (self.optimalMoves/self.moves) * 1000
+            # higher fitness for less moves moves
+            # max score for optimal moves
+            score += (self.optimalMoves / self.moves) * 1000
         else:
-            #if game hasn't completed determine how
+            # if game hasn't completed determine how
             score += self.percentCorrect() * 100
         return score

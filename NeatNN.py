@@ -13,28 +13,31 @@ class NeatNeuralNetwork:
 
     def __init__(self, problem):
         self.problem = problem
-        self.network = [[len(problem.input)], [len(problem.allMoves)]]
-        # TODO create input neurons and output neurons automatically
+        self.network = [[len(problem.inputSize())], [1]]
+        for i in range(problem.inputSize):
+            newneuron = Neuron(i, 0, i)
+            self.network[0].append(newneuron)
+        newneuron = Neuron(problem.inputSize, 1, 0)
+        self.network[1].append(newneuron)
         self.neuronNames = []
 
-    def runNetwork(self):
-        while not self.problem.gameOver():
-            self.calculate()
-            move = self.chooseMove()
-            if move == -1:
-                break
-            else:
-                self.makeMove(move)
-        pass
+    def runNetwork(self, problem):
+        self.problem = problem
+        count = 0
+        while not self.problem.gameOver() and count < 500:
+            self.makeMove(self.chooseMove())
+            count += 1
+        return count
 
     def chooseMove(self):
-        # TODO add this in
-        values = []
-        for neuron in self.network[-1]:
-            values.append(neuron.getValue())
-        if self.checkZeros(values):
-            return -1
-        # TODO here
+        highestMoveScore = -10000
+        highestMove = null
+        for moves in problem.validMoves:
+            temp = self.calculate(problem.newStateRep() + move)
+            if temp > highestMoveScore:
+                highestMoveScore = temp
+                highestMove = move
+        return highestMove
 
     def checkZeros(self, values):
         for i in values:
@@ -43,13 +46,13 @@ class NeatNeuralNetwork:
         return True
 
     def makeMove(self, move):
-        # TODO add this in
-        pass
+        problem.makeMove(move)
+        return
 
     # calculates the value of each neuron and passes it to the next layer
     # returns the value of the last layer of neurons
-    def calculate(self):
-        self.zeroLayer()
+    def calculate(self, stateMove):
+        self.zeroLayer(stateMove)
         values = []
         for i in range(len(self.network)):
             for j in range(len(self.network[i])):
@@ -61,9 +64,9 @@ class NeatNeuralNetwork:
 
     # should go through and input the intial values
     # into the first layer of the NN
-    def zeroLayer(self):
-        for i in range(len(problem.input)):
-            self.network[0][i].value[0] = problem.input[i]
+    def zeroLayer(self, stateMove):
+        for i in range(len(stateMove)):
+            self.network[0][i].value[0] = stateMove[i]
         return
 
     # changes a weight to include a neuron in the middle

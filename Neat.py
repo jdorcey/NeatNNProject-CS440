@@ -5,6 +5,7 @@ Created on Sat Dec  2 13:33:44 2017
 @author: Tom Shaw and Jenn Dorcey
 """
 import copy
+import time
 
 
 class Neat:
@@ -22,25 +23,27 @@ class Neat:
         # train until a champion hits optimal fitness
         while self.chooseChampion.fitness != problem.getOptimal():
             # print out the results of the last iteration
-            if self.results:
-                print(results[-1])
+            startTime = time.time()
             self.runNetworks()
+            endTime = time.time()
             self.breedNetworks()
-            # TODO add to results somehow
+            print("{}{}".format(self.networks[0].fitness, endTime - startTime))
+            results.append([self.networks[0].fitness, endTime - startTime])
         return results
 
     # This method is for testing the current champion
     def test(self):
-        chamption = self.chooseChampion()
-        champion.runNetwork()
-        # TODO add results
-        return
+        startTime = time.time()
+        champion = self.chooseChampion()
+        moves = champion.runNetwork(copy.deepcopy(problem))
+        endTime = time.time()
+        return [moves, champion.fitness(), endTime - startTime]
 
     # This method runs all the currently generated networks
     # TODO make this concurrent
     def runNetworks(self):
         for net in self.networks:
-            net.runNetwork()
+            net.runNetwork(copy.deepcopy(problem))
         return
 
     # this method is resposible for breeding all the current networks

@@ -1,16 +1,16 @@
-import random     
+import random
 
 UP = 1
 DOWN = 2
 LEFT = 3
 RIGHT = 4
 
-#Used for computing tile indices   
-OFFSETS = {UP: (1, 0), 
-           DOWN: (-1, 0), 
-           LEFT: (0, 1), 
-           RIGHT: (0, -1)} 
-  
+#Used for computing tile indices
+OFFSETS = {UP: (1, 0),
+           DOWN: (-1, 0),
+           LEFT: (0, 1),
+           RIGHT: (0, -1)}
+
 class TwentyFortyEight:
     #2048 game puzzle
     def __init__(self):
@@ -19,7 +19,7 @@ class TwentyFortyEight:
         self.moves = 0
         self.currentScore = 0
         self.highScore = 0
-        self.optimalMoves = 50000 #WHAT SHOULD THIS BE??  
+        self.optimalMoves = 50000 #WHAT SHOULD THIS BE??
         #Inital row dictionary
         self.initial = {
             UP : [[0, tile] for tile in range(4)],
@@ -27,13 +27,13 @@ class TwentyFortyEight:
             LEFT : [[tile, 0] for tile in range(4)],
             RIGHT : [[tile, 3] for tile in range (4)]
         }
-          
-    #Merge the rows so the games state can be updated    
+
+    #Merge the rows so the games state can be updated
     def mergeRow(self, row):
         nonzeros = []
         newRow = []
         merged = False
-    
+
         #Move all non-zero tiles to the left and append 0's
         for tile in row:
             if tile != 0:
@@ -41,8 +41,8 @@ class TwentyFortyEight:
 
         while len(nonzeros) != len(row):
             nonzeros.append(0)
-             
-        #Double tile value if neighbor has same value   
+
+        #Double tile value if neighbor has same value
         for tile in range(0, len(nonzeros) - 1):
             if nonzeros[tile] == nonzeros[tile + 1] and merged == False:
                 newRow.append(2 * nonzeros[tile])
@@ -55,20 +55,20 @@ class TwentyFortyEight:
 
         if nonzeros[-1] != 0 and merged == False:
             newRow.append(nonzeros[-1])
-        
+
         while len(newRow) != len(nonzeros):
             newRow.append(0)
 
         return newRow
-            
-    #Prints game state 
+
+    #Prints game state
     def __repr__(self):
         for row in range(0, 4):
             print(self.state[row])
-            
+
         return ""
-    
-    #Returns a list of legal moves the current game state can make    
+
+    #Returns a list of legal moves the current game state can make
     def validMoves(self):
         moves = []
 
@@ -94,18 +94,18 @@ class TwentyFortyEight:
                     moves.append([3])
 
         for row in range(0, 4):
-            for col in range(0,3):          
+            for col in range(0,3):
                 if self.state[row][col] == self.state[row][col +1] and [4] not in moves:
                     moves.append([4])
                 if self.state[row][col +1] == 0 and [4] not in moves:
-                    moves.append([4])  
-                    
-        if len(moves) != 0 :  
+                    moves.append([4])
+
+        if len(moves) != 0 :
             return moves
         else:
             moves.append([0])
             return moves
-    
+
     #How the games current state gets updated
     def makeMove(self, movelist):
         move = movelist[0]
@@ -134,92 +134,77 @@ class TwentyFortyEight:
 
             for i in temp:
                 row.append(self.state[i[0]][i[1]])
-                
+
             #Merge row
             merged = self.mergeRow(row)
 
             for x, y in zip(merged, temp):
-                self.state[y[0]][y[1]] = x  
-                
-            temp = []  
-            
+                self.state[y[0]][y[1]] = x
+
+            temp = []
+
         afterMove = str(self.state)
         if beforeMove != afterMove:
             self.moves += 1
-            self.randomTile()       
+            self.randomTile()
 
-    #Add a new tile to game state, should be a 2 90% and a 4 10% of the time      
+    #Add a new tile to game state, should be a 2 90% and a 4 10% of the time
     def randomTile(self):
         positions = []
         for row in range(4):
             for col in range(4):
                 if self.state[row][col] == 0:
                     positions.append([row, col])
-                    
-        #Select a random open tile        
+
+        #Select a random open tile
         randomT = random.choice(positions)
         choices = [(2, 9), (4, 1)]
         population = [v for v, c in choices for i in range(c)]
         tile = random.choice(population)
         self.state[randomT[0]][randomT[1]] = tile
-            
+
     #Check if game is over
     def gameOver(self):
         check = self.validMoves()
-        
+
         if check[0] == [0]:
             self.reset()
             return True
         else:
             return False
-     
+
     #Returns the input size used by Neural Networks
     def inputSize(self):
         #there are always 16 tiles in the game + the move
         return 17
-    
+
     #Reset game state so a new game can be played
     def reset(self):
         if self.highScore < self.currentScore:
             self.highScore = self.currentScore
-        
+
         self.state = [[0 for col in range(4)] for row in range(4)]
         self.randomTile()
         self.moves = 0
         self.currentScore = 0
-      
+
     #Another way of representing the games state
     def newStateRep(self):
         newRep = []
-        
+
         for c in range(len(self.state)):
             for i in range(len(self.state)):
                 newRep.append(self.state[c][i])
-                
+
         return newRep
-    
-    #Returns all the moves that can be made in the game 
+
+    # Returns all the moves that can be made in the game
     def allMoves(self):
         return [[1], [2], [3], [4]]
-    
-    #Calculates how close the game is to being completed
-    def percentCorrect(self):        
-        return len(self.state)/16
-    
-    #Determines the fitness to be used by the training algorithm
+
+    # Determines the fitness to be used by the training algorithm
     def fitness(self):
-        #fitness should be called on a state after NN has run on it
-        score = 0
-        #max score is 1100
-        if self.gameOver():
-            #if game completed add 100 points
-            #will automatically make a network that completes the game more fit
-            #than a network that hasn't finished
-            score += 100 
-            #higher fitness for less moves moves
-            #max score for optimal moves
-            score += (self.optimalMoves/self.moves) * 1000 
-        else:
-            #if game hasn't completed determine how 
-            score += self.percentCorrect() * 100
+        for row in state:
+            for element in row:
+                score += element
         return score
