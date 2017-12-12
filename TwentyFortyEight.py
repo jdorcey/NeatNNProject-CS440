@@ -59,9 +59,15 @@ class TwentyFortyEight:
             RIGHT : [[tile, 3] for tile in range (4)]
         }
         #self.randomTile()
+<<<<<<< HEAD
 
     # Print game
     def __str__(self):
+=======
+            
+    # Print game 
+    def __repr__(self):
+>>>>>>> 4b1a2b89abd2b9a45fcd9f4aa2aebf1e843d90af
         for row in range(0, 4):
             print(self.state[row])
         return ""
