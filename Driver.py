@@ -4,9 +4,16 @@
 import Qnet
 from TOH import TOH
 from TwentyFortyEight import TwentyFortyEight
+import os
+import psutil
 import time
 
 def main():
+    
+    #the memory usage before the start of the current Python process
+    process = psutil.Process(os.getpid())
+    print(process.memory_info().rss/10**9, 'GB')
+
 
     hiddenLayers = [40]
     nReplays = 0
@@ -34,7 +41,8 @@ def main():
     
     #endTestTime = time.time() - startTestTime
    
-    
+    #the memory usage after the current Python process
+    print(process.memory_info().rss/10**9, 'GB')
     
  
 if __name__ == "__main__":
