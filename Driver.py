@@ -19,7 +19,6 @@ def main():
     nReplays = 0
     toh = TOH()
     tfe = TwentyFortyEight()
-<<<<<<< HEAD
     
     #Start training TOH
     print("TOWERS OF HANOI:")
@@ -45,33 +44,6 @@ def main():
     #Start testing TFE
     #startTfeTest = time.time()
     #endTfeTest = time.time() - startTfeTest
-=======
-    tfe.randomTile()
-
-
-
-    #time training
-    startTrainTime = time.time()
-    print("START TRAIN: ", startTrainTime)
-    qnet, outcomes, samples = Qnet.trainQnet(5, hiddenLayers, nIterations, nReplays,
-                                    epsilon, epsilonDecayFactor, tfe)
-    endTrainTime = time.time() - startTrainTime
-    print("END TRAIN: ", endTrainTime)
-
-    #time testing
-    #startTestTime = time.time()
-
-
-    #endTestTime = time.time() - startTestTime
-<<<<<<< HEAD
-
-
-
-
-
-
-=======
->>>>>>> master
    
     #the memory usage after the process completes
     endMem = process.memory_info().rss/10**9, 'GB'
@@ -79,10 +51,5 @@ def main():
     print()
     print("TOTAL MEMORY USED BY PROGRAM IN GB: ", totalMem) 
     
-<<<<<<< HEAD
-=======
- 
->>>>>>> 4b1a2b89abd2b9a45fcd9f4aa2aebf1e843d90af
->>>>>>> master
 if __name__ == "__main__":
     main()

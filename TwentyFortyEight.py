@@ -1,63 +1,16 @@
-<<<<<<< HEAD
 import random     
-=======
-# -*- coding: utf-8 -*-
-#@author: Jennifer Dorcey
-
-import random
->>>>>>> master
 
 UP = 1
 DOWN = 2
 LEFT = 3
 RIGHT = 4
 
-<<<<<<< HEAD
 #Used for computing tile indices   
 OFFSETS = {UP: (1, 0), 
            DOWN: (-1, 0), 
            LEFT: (0, 1), 
            RIGHT: (0, -1)} 
   
-=======
-#Offsets for computing tile indices in each direction
-OFFSETS = {UP: (1, 0),
-           DOWN: (-1, 0),
-           LEFT: (0, 1),
-           RIGHT: (0, -1)}
-
-def mergeRow(row):
-    nonzeros = []
-    newRow = []
-    merged = False
-
-    #Move all non-zero tiles to the left and append 0's
-    for tile in row:
-        if tile != 0:
-            nonzeros.append(tile)
-
-    while len(nonzeros) != len(row):
-        nonzeros.append(0)
-
-    #Double tile is neighbor is same value
-    for tile in range(0, len(nonzeros) - 1):
-        if nonzeros[tile] == nonzeros[tile + 1] and merged == False:
-            newRow.append(2 * nonzeros[tile])
-            merged = True
-        elif nonzeros[tile] != nonzeros[tile + 1] and merged == False:
-            newRow.append(nonzeros[tile])
-        elif merged == True:
-            merged = False
-
-    if nonzeros[-1] != 0 and merged == False:
-        newRow.append(nonzeros[-1])
-
-    while len(newRow) != len(nonzeros):
-        newRow.append(0)
-
-    return newRow
-
->>>>>>> master
 class TwentyFortyEight:
     #2048 game puzzle
     def __init__(self):
@@ -74,7 +27,6 @@ class TwentyFortyEight:
             LEFT : [[tile, 0] for tile in range(4)],
             RIGHT : [[tile, 3] for tile in range (4)]
         }
-<<<<<<< HEAD
           
     #Merge the rows so the games state can be updated    
     def mergeRow(self, row):
@@ -108,28 +60,15 @@ class TwentyFortyEight:
             newRow.append(0)
 
         return newRow
-=======
-        #self.randomTile()
-<<<<<<< HEAD
-
-    # Print game
-    def __str__(self):
-=======
->>>>>>> master
             
     #Prints game state 
     def __repr__(self):
->>>>>>> 4b1a2b89abd2b9a45fcd9f4aa2aebf1e843d90af
         for row in range(0, 4):
             print(self.state[row])
             
         return ""
-<<<<<<< HEAD
     
     #Returns a list of legal moves the current game state can make    
-=======
-
->>>>>>> master
     def validMoves(self):
         moves = []
 
@@ -155,7 +94,6 @@ class TwentyFortyEight:
                     moves.append([3])
 
         for row in range(0, 4):
-<<<<<<< HEAD
             for col in range(0,3):          
                 if self.state[row][col] == self.state[row][col +1] and [4] not in moves:
                     moves.append([4])
@@ -169,17 +107,6 @@ class TwentyFortyEight:
             return moves
     
     #How the games current state gets updated
-=======
-            for col in range(0,3):
-                if self.state[row][col] == self.state[row][col +1] and 4 not in moves:
-                    moves.append([4])
-                if self.state[row][col +1] == 0 and 4 not in moves:
-                    moves.append([4])
-
-        return moves
-
-    # Move tiles in the given direction and add new tile if any tiles moved
->>>>>>> master
     def makeMove(self, movelist):
         move = movelist[0]
         initial = self.initial[move]
@@ -212,7 +139,6 @@ class TwentyFortyEight:
             merged = self.mergeRow(row)
 
             for x, y in zip(merged, temp):
-<<<<<<< HEAD
                 self.state[y[0]][y[1]] = x  
                 
             temp = []  
@@ -223,17 +149,6 @@ class TwentyFortyEight:
             self.randomTile()       
 
     #Add a new tile to game state, should be a 2 90% and a 4 10% of the time      
-=======
-                self.state[y[0]][y[1]] = x
-            temp = []
-
-        afterMove = str(self.state)
-        if beforeMove != afterMove:
-            self.randomTile()
-
-    # Create new tile in randomly selected spot, should be 2 90% of the time
-    #and 4 10% of the time
->>>>>>> master
     def randomTile(self):
         positions = []
         for row in range(4):
@@ -247,13 +162,8 @@ class TwentyFortyEight:
         population = [v for v, c in choices for i in range(c)]
         tile = random.choice(population)
         self.state[randomT[0]][randomT[1]] = tile
-<<<<<<< HEAD
             
     #Check if game is over
-=======
-
-    #check if game is over
->>>>>>> master
     def gameOver(self):
         check = self.validMoves()
         
@@ -262,16 +172,11 @@ class TwentyFortyEight:
             return True
         else:
             return False
-<<<<<<< HEAD
      
     #Returns the input size used by Neural Networks
-=======
-
->>>>>>> master
     def inputSize(self):
         #there are always 16 tiles in the game + the move
         return 17
-<<<<<<< HEAD
     
     #Reset game state so a new game can be played
     def reset(self):
@@ -284,19 +189,11 @@ class TwentyFortyEight:
         self.currentScore = 0
       
     #Another way of representing the games state
-=======
-
-    #Reset game so grid is empty
-    def reset(self):
-        self.state = [[0 for col in range(4)] for row in range(4)]
-
->>>>>>> master
     def newStateRep(self):
         newRep = []
         
         for c in range(len(self.state)):
             for i in range(len(self.state)):
-<<<<<<< HEAD
                 newRep.append(self.state[c][i])
                 
         return newRep
@@ -326,8 +223,3 @@ class TwentyFortyEight:
             #if game hasn't completed determine how 
             score += self.percentCorrect() * 100
         return score
-=======
-                newrep.append(self.state[c][i])
-
-        return newrep
->>>>>>> master
