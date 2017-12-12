@@ -58,6 +58,7 @@ class TwentyFortyEight:
             LEFT : [[tile, 0] for tile in range(4)],
             RIGHT : [[tile, 3] for tile in range (4)]
         }
+        #self.randomTile()
             
     # Print game 
     def __str__(self):
@@ -96,11 +97,7 @@ class TwentyFortyEight:
                 if self.state[row][col +1] == 0 and 4 not in moves:
                     moves.append([4])  
               
-        if self.gameOver():
-            print("NO MORE MOVES! GAME OVER, RESETTING GAME!")
-            return self.reset()
-        else:
-            return moves
+        return moves
     
     # Move tiles in the given direction and add new tile if any tiles moved
     def makeMove(self, movelist):
@@ -157,28 +154,28 @@ class TwentyFortyEight:
             
     #check if game is over
     def gameOver(self):
-        positions = []
+        i = 0
         for row in range(4):
             for col in range(4):
                 if self.state[row][col] == 0:
-                    positions.append([row, col])
-        if len(positions) == 0:
+                    i += 1
+        if i == 0:
             return True
         else:
             return False
-    
+        
     def inputSize(self):
         return 17
+    
     #Reset game so grid is empty
     def reset(self):
         self.state = [[0 for col in range(4)] for row in range(4)]
         
     def newStateRep(self):
         newrep = []
-         
-            
-        for c, val in enumerate(self.state):
-            newrep.append(val)
+        for c in range(len(self.state)):
+            for i in range(len(self.state)):
+                newrep.append(self.state[c][i])
                 
         return newrep
     

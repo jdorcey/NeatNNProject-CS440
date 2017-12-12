@@ -5,7 +5,7 @@ import Qnet
 from TOH import TOH
 from TwentyFortyEight import TwentyFortyEight
 import time
-import random
+#import random
 
 def main():
 
@@ -13,10 +13,12 @@ def main():
     nReplays = 0
     nIterations = 2
     epsilon = 0.8
-    epsilonDecayFactor = 0.95
+    epsilonDecayFactor = 0.99
     nReplays = 0
-    toh = TOH(6)
+    toh = TOH()
     tfe = TwentyFortyEight()
+    tfe.randomTile()
+    
     
     
     #time training
@@ -26,13 +28,13 @@ def main():
                                     epsilon, epsilonDecayFactor, tfe)
     endTrainTime = time.time() - startTrainTime
     print("END TRAIN: ", endTrainTime)
-    '''
+    
     #time testing
     #startTestTime = time.time()
     
     
     #endTestTime = time.time() - startTestTime
-    '''
+    
     
 
     

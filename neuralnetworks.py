@@ -37,7 +37,6 @@ class NeuralNetwork:
 
     def train(self,X,T,nIterations=100,verbose=False,
               weightPrecision=0,errorPrecision=0):
-        
         if self.Xmeans is None:
             self.Xmeans = X.mean(axis=0)
             self.Xstds = X.std(axis=0)
