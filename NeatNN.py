@@ -70,11 +70,19 @@ class NeatNeuralNetwork:
     # adds a gene to a random neuron-neuron combination
     def addWeight(self):
         # get the from neuron
-        neurons = []
+        fromNeurons = []
         for i in range(len(self.network)-1):
             for j in range(len(self.network[i])):
-                neurons.append[self.network[i][j]]
-        # TODO here
+                fromNeurons.append[self.network[i][j]]
+        # get to neuron
+        toNeurons = []
+        for i in range(1, len(self.network)):
+            for j in range(len(self.network[i])):
+                toNeurons.append[self.network[i][j]]
+        # generate weight
+        fromNeuron = r.choice(fromNeuron)
+        toNeuron = r.choice(toNeurons)
+        fromNeuron.makeAFriend(toNeuron)
         return
 
     # method that changes the value of 2-3 weights
