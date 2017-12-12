@@ -299,34 +299,3 @@ if __name__== "__main__":
         plt.setp(plt.xticks()[1], rotation=30)
         plt.ylabel('Mean RMSE')
         plt.xlabel('Network Architecture')
-
-        
-    print( '\n------------------------------------------------------------')
-    print( "Classification Example: XOR, approximate f(x1,x2) = x1 xor x2")
-    print( '                        Using neural net with 2 inputs, 3 hidden units, 2 outputs')
-    X = np.array([[0,0],[1,0],[0,1],[1,1]])
-    T = np.array([[1],[2],[2],[1]])
-    nnet = NeuralNetworkClassifier(2,(4,),2)
-    nnet.train(X,T,weightPrecision=1.e-10,errorPrecision=1.e-10,nIterations=100)
-    print( "scg stopped after",nnet.getNumberOfIterations(),"iterations:",nnet.reason)
-    (classes,y,Z) = nnet.use(X, allOutputs=True)
-    
-
-    print( 'X(x1,x2), Target Classses, Predicted Classes')
-    print( np.hstack((X,T,classes)))
-
-    print( "Hidden Outputs")
-    print( Z)
-    
-    plt.figure(3)
-    plt.clf()
-    plt.subplot(2,1,1)
-    plt.plot(np.exp(-nnet.getErrorTrace()))
-    plt.xlabel('Iterations');
-    plt.ylabel('Likelihood')
-    plt.title('Classification Example')
-    plt.subplot(2,1,2)
-    nnet.draw(['x1','x2'],['xor'])
-
-    
-        

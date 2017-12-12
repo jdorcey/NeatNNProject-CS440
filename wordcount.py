@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#@#author: Jennifer Dorcey
-
-
 import io
 from nbformat import current
 import glob
