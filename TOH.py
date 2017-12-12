@@ -68,7 +68,7 @@ class TOH:
         self.state = stateNew
         return self.state
     
-    def goalTest(self):
+    def gameOver(self):
         if(self.state == self.goalState):
             return True
         return False
@@ -85,6 +85,9 @@ class TOH:
     def allMoves(self):
         return [[1, 2], [1, 3], [2, 3], [2, 1], [3, 1], [3, 2]]
     
+    def inputSize(self):
+        return self.n +2
+    
     def percentCorrect(self):
         #pecent complete is how many disks there are on the goal peg over the total number
         return len(self.state[2])/self.n
@@ -94,7 +97,7 @@ class TOH:
     def fitness(self):
         score = 0
         #max score is 1100
-        if(goaltest()):
+        if self.goalstate:
             #if game completed add 100 points
             #will automatically make a network that completes the game more fit
             #than a network that hasn't finished
