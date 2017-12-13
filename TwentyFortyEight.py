@@ -16,6 +16,7 @@ class TwentyFortyEight:
     def __init__(self):
         self.state = [[0 for col in range(4)] for row in range(4)]
         self.goalState = False
+<<<<<<< HEAD
         random.seed(1337)
 =======
 >>>>>>> 2b40a402dc4fa328ca27ca993656185a217e3ea7
@@ -178,6 +179,7 @@ class TwentyFortyEight:
                     self.goalState = True
               
         check = self.validMoves() 
+<<<<<<< HEAD
         if not check or self.goalState:
 =======
         if check[0] == [0] or self.goalState:

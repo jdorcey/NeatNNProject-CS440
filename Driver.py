@@ -21,6 +21,7 @@ def main():
     toh = TOH()
     tfe = TwentyFortyEight()
     
+<<<<<<< HEAD
     net = Neat(tfe)
 =======
 <<<<<<< HEAD
