@@ -37,7 +37,7 @@ class Neat:
     def test(self):
         startTime = time.time()
         champion = self.chooseChampion()
-        moves = champion.runNetwork(copy.deepcopy(problem))
+        moves = champion.runNetwork(copy.deepcopy(self.problem))
         endTime = time.time()
         return [moves, champion.fitness(), endTime - startTime]
 
