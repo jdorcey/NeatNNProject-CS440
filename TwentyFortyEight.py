@@ -15,11 +15,12 @@ class TwentyFortyEight:
     #2048 game puzzle
     def __init__(self):
         self.state = [[0 for col in range(4)] for row in range(4)]
+        self.goalState = False
+        random.seed(1337)
         self.randomTile()
         self.moves = 0
         self.currentScore = 0
         self.highScore = 0
-        self.optimalMoves = 50000 #WHAT SHOULD THIS BE??
         #Inital row dictionary
         self.initial = {
             UP : [[0, tile] for tile in range(4)],
@@ -165,14 +166,18 @@ class TwentyFortyEight:
 
     #Check if game is over
     def gameOver(self):
-        check = self.validMoves()
-
-        if check[0] == [0]:
+        for row in range(len(self.state)):
+            for col in range(len(self.state[row])):
+                if self.state[row][col] == 2048:
+                    self.goalState = True
+              
+        check = self.validMoves() 
+        if not check or self.goalState:
             self.reset()
             return True
         else:
             return False
-
+                
     #Returns the input size used by Neural Networks
     def inputSize(self):
         #there are always 16 tiles in the game + the move
@@ -204,7 +209,12 @@ class TwentyFortyEight:
 
     # Determines the fitness to be used by the training algorithm
     def fitness(self):
-        for row in state:
+        score = 0
+        for row in self.state:
             for element in row:
-                score += element
+                if element >= score:
+                    score = element
         return score
+    
+    def getOptimal(self):
+        return 2048

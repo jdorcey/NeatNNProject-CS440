@@ -21,7 +21,7 @@ def main():
     toh = TOH()
     tfe = TwentyFortyEight()
     
-    net = Neat(toh)
+    net = Neat(tfe)
     net.train()
     
     

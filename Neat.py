@@ -58,7 +58,7 @@ class Neat:
             for i in range(1, len(self.networks)):
                 self.breedTwo(0, i)
         # mutate all current networks 3 times
-        self.mutateNetworks(6)
+        self.mutateNetworks(10)
         return
 
     # this method removes the lower half of the networks
@@ -105,7 +105,7 @@ class Neat:
         for i in range(1, len(net.network) - 1):
             for j in range(len(net.network[i])):
                 if self.neruonInList(net.network[i][j], new):
-                    if r.uniform(0, 1) < .6:
+                    if r.uniform(0, 1) < .8:
                         new.append(net.network[i][j])
         return new
 
@@ -120,6 +120,7 @@ class Neat:
     # this method is for signaling networks to mutate
     # ignores the champion
     def mutateNetworks(self, iterations):
+        self.sortNetworks()
         for j in range(1, len(self.networks)):
             for i in range(iterations):
                 self.networks[j].mutate()

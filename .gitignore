@@ -5,4 +5,11 @@ __pycache__/scaledconjugategradient.cpython-36.pyc
 __pycache__/Qnet.cpython-36.pyc
 __pycache__/TOH.cpython-36.pyc
 __pycache__/Qnet.cpython-36.pyc
+<<<<<<< HEAD
+__pycache__/TwentyFortyEight.cpython-36.pyc
+__pycache__/TOH.cpython-36.pyc
+Driver.py
+=======
+*.pyc
+>>>>>>> a0b768641c732e00dfac1d2d9b094a6efb31cdb8
 *.pyc

@@ -76,6 +76,7 @@ class TOH:
 
     #Returns the input size used by Neural Networks
     def inputSize(self):
+        #how many disks are being used + move
         return self.n + 2
 
     #Another way of representing the games state

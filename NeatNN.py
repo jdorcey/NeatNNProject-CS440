@@ -126,11 +126,19 @@ class NeatNeuralNetwork:
         return
 
     def checkWeights(self, neuron):
-        for x in neuron.getWeights():
-            if x[0].name not in self.neuronNames:
+        for x in range(len(neuron.out)):
+            if neuron.out[x].name not in self.neuronNames:
                 neuron.removeNeuron(x[0])
+            else:
+                neuron.out[x] = self.findNeuron(neuron.out[x].name)
         return
 
+    def findNeuron(self, name):
+        for i in range(len(self.network)):
+            for j in range(len(self.network[i])):
+                if name == self.network[i][j]:
+                    return self.network[i][j]
+                
     # adds a gene to a random neuron-neuron combination
     def addWeight(self):
         # get the from neuron
