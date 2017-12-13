@@ -13,13 +13,12 @@ def main():
 
     hiddenLayers = [40]
     nReplays = 0
-    nIterations = 20
-    epsilon = 0.8
+    nIterations = 5
+    epsilon = 0.5
     epsilonDecayFactor = 0.99
-    nReplays = 0
     toh = TOH()
     tfe = TwentyFortyEight()
-    
+  
     #Start training TOH
     print("TOWERS OF HANOI:")
     startTohTrain = time.time()

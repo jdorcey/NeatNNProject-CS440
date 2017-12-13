@@ -65,9 +65,9 @@ def trainQnet(nReps, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayF
         # Experience Replay: Train on recent samples with updates to Qnext.
         samplesNextStateForReplay = np.array(samplesNextStateForReplay)
         for replay in range(nReplays):
-            QnextNotZero = samples[:, n +1] != 0
-            samples[QnextNotZero, n +1:n +2] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
-            T = samples[:, n +1:n +2] + samples[:, n +1:n +2]
+            QnextNotZero = samples[:,n+1] != 0
+            samples[QnextNotZero, n+1:n+2] = Qnet.use(samplesNextStateForReplay[QnextNotZero,:])
+            T = samples[:, n+1:n+2] + samples[:, n+1:n+2]
             Qnet.train(X, T, nIterations, verbose=False)
 
     print('TRAINING COMPLETE')
