@@ -22,10 +22,12 @@ class Neuron:
         self.nnlayer = x
         self.nnlindex = y
 
-    # pass value to another neuron
-    def shareValue(self, index):
-        self.v[index] = self.value
-        return
+    def __str__(self):
+        return "name: {}, number of weights: {}".format(self.name, len(self.out))
+    
+    def __repr__(self):
+        return "name: {}, number of weights: {}".format(self.name, len(self.out))
+
 
     # add a weight between this neuron and another neuron
     def makeAFriend(self, other):
@@ -35,7 +37,7 @@ class Neuron:
 
     # add a weight with this neuron and another
     # used when a neuron takes the place of another
-    def makeAFriend(self, other, index):
+    def makeAFriendi(self, other, index):
         self.out.append(other)
         self.outIndex.append(index)
         return
@@ -46,11 +48,11 @@ class Neuron:
     def addWeight(self):
         newIndex = len(self.w)
         self.w.append(r.uniform(-1, 1))
-        self.v.append()
+        self.v.append(0)
         return newIndex
 
     # sums the input values and their weights
-    def calculate(self):
+    def compute(self):
         sum = 0
         for i in range(len(self.w)):
             sum += (self.w[i] * self.v[i])
@@ -60,7 +62,7 @@ class Neuron:
     # method that controls sharing to all output neurons
     def share(self):
         for i in range(len(self.out)):
-            self.out[i].shareValue(self.outindex[i])
+            self.out[i].v[self.outIndex[i]] = self.value
         return
 
     # a getter for the current value
@@ -89,7 +91,9 @@ class Neuron:
     # given another neuron, finds and removes the neruon from the outlist
     def removeNeuron(self, other):
         for i in range(len(self.out)):
-            if out[i].name == other.name:
-                self.out.remove(i)
-                self.outIndex.remove(i)
+            #print("length : {}  ,  index:  {}".format(len(self.out), i))
+            if self.out[i].name == other.name:
+                del self.out[i]
+                del self.outIndex[i]
+                break
         return

@@ -125,3 +125,6 @@ class TOH:
             # if game hasn't completed determine how
             score += self.percentCorrect() * 100
         return score
+    
+    def getOptimal(self):
+        return 1100
