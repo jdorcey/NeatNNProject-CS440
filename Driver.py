@@ -22,6 +22,19 @@ def main():
     tfe = TwentyFortyEight()
     
     net = Neat(tfe)
+=======
+<<<<<<< HEAD
+    
+    #Start training TOH
+    print("TOWERS OF HANOI:")
+    startTohTrain = time.time()
+    qnet, outcomes, samples = Qnet.trainQnet(50, hiddenLayers, nIterations, nReplays, 
+                                    epsilon, epsilonDecayFactor, toh)
+    endTohTrain = time.time() - startTohTrain
+    print("TOTAL TIME TO TRAIN TOWERS OF HANOI: ", endTohTrain)
+=======
+    net = Neat(toh)
+>>>>>>> 2b40a402dc4fa328ca27ca993656185a217e3ea7
     net.train()
     
     
@@ -32,18 +45,29 @@ def main():
     #qnet, outcomes, samples = Qnet.trainQnet(100, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, toh)
     #endTohTrain = time.time() - startTohTrain
     #print("TOTAL TIME TO TRAIN TOWERS OF HANOI: ", endTohTrain)
+>>>>>>> 0294d32b34b2aeba41d474dfc6ce5d94d2550af3
     
     #Start testing TOH
     #startTohTest = time.time()    
     #endTohTest = time.time() - startTohTest
 
     #Start training TwentyFortyEight
+<<<<<<< HEAD
+    print()
+    print("TWENTY FORTY EIGHT:")
+    startTfeTrain = time.time()
+    qnet, outcomes, samples = Qnet.trainQnet(50, hiddenLayers, nIterations, nReplays, 
+                                    epsilon, epsilonDecayFactor, tfe)
+    endTfeTrain = time.time() - startTfeTrain
+    print("TOTAL TIME TO TRAIN TWENTY FORTY EIGHT: ", endTfeTrain)
+=======
     #print()
     #print("TWENTY FORTY EIGHT:")
     #startTfeTrain = time.time()
     #qnet, outcomes, samples = Qnet.trainQnet(100, hiddenLayers, nIterations, nReplays, epsilon, epsilonDecayFactor, tfe)
     #endTfeTrain = time.time() - startTfeTrain
     #print("TOTAL TIME TO TRAIN TWENTY FORTY EIGHT: ", endTfeTrain)
+>>>>>>> 0294d32b34b2aeba41d474dfc6ce5d94d2550af3
     
     #Start testing TFE
     #startTfeTest = time.time()
