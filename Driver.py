@@ -18,11 +18,12 @@ def main():
     epsilonDecayFactor = 0.99
     toh = TOH()
     tfe = TwentyFortyEight()
-  
+    
+    
     #Start training TOH
     print("TOWERS OF HANOI:")
     startTohTrain = time.time()
-    qnet, outcomes, samples = Qnet.trainQnet(100, hiddenLayers, nIterations, nReplays, 
+    qnet, outcomes, samples = Qnet.trainQnet(50, hiddenLayers, nIterations, nReplays, 
                                     epsilon, epsilonDecayFactor, toh)
     endTohTrain = time.time() - startTohTrain
     print("TOTAL TIME TO TRAIN TOWERS OF HANOI: ", endTohTrain)
@@ -35,7 +36,7 @@ def main():
     print()
     print("TWENTY FORTY EIGHT:")
     startTfeTrain = time.time()
-    qnet, outcomes, samples = Qnet.trainQnet(100, hiddenLayers, nIterations, nReplays, 
+    qnet, outcomes, samples = Qnet.trainQnet(50, hiddenLayers, nIterations, nReplays, 
                                     epsilon, epsilonDecayFactor, tfe)
     endTfeTrain = time.time() - startTfeTrain
     print("TOTAL TIME TO TRAIN TWENTY FORTY EIGHT: ", endTfeTrain)
