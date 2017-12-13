@@ -120,11 +120,19 @@ class TOH:
             score += 100
             # higher fitness for less moves moves
             # max score for optimal moves
-            score += (self.optimalMoves / self.moves) * 1000
+            score += (self.optimalMoves / self.moves) * 10000
         else:
             # if game hasn't completed determine how
-            score += self.percentCorrect() * 100
+            score += self.percentCorrect() * 100 + self.thirdPeg()
         return score
     
+    def thirdPeg(self):
+        bonus = 0
+        if 3 in self.state[2]:
+            bonus += 10
+        if 2 in self.state[2]:
+            bonus += 2
+        return bonus
+    
     def getOptimal(self):
-        return 1100
+        return 11000

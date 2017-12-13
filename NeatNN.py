@@ -32,7 +32,7 @@ class NeatNeuralNetwork:
     def runNetwork(self, problem):
         self.problem = problem
         count = 0
-        while not self.problem.gameOver() and count < 500:
+        while not self.problem.gameOver() and count < 100:
             self.makeMove(self.chooseMove())
             count += 1
         return count
@@ -60,7 +60,7 @@ class NeatNeuralNetwork:
     # returns the value of the last layer of neurons
     def calculate(self, stateMove):
         self.zeroLayer(stateMove)
-        for i in range(len(self.network)):
+        for i in range(1, len(self.network)):
             for j in range(len(self.network[i])):
                 self.network[i][j].compute()
                 self.network[i][j].share()
