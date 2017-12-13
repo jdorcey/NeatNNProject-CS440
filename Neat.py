@@ -132,7 +132,7 @@ class Neat:
         for i in range(100):
             newNetwork = NeatNeuralNetwork(copy.deepcopy(self.problem))
             self.networks.append(newNetwork)
-        self.mutateNetworks(10)
+        self.mutateNetworks(100)
         return
 
     # This method selects the highest fitness
