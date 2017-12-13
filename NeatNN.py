@@ -4,22 +4,30 @@ Created on Sat Dec  2 15:27:23 2017
 
 @author: Tom Shaw
 """
-import Neuron
+from Neuron import Neuron
 import random as r
-import Neat
 
-
+global Name
+Name = 6
 class NeatNeuralNetwork:
 
     def __init__(self, problem):
         self.problem = problem
-        self.network = [[len(problem.inputSize())], [1]]
-        for i in range(problem.inputSize):
+        layer0 = []
+        for i in range(problem.inputSize()):
             newneuron = Neuron(i, 0, i)
-            self.network[0].append(newneuron)
-        newneuron = Neuron(problem.inputSize, 1, 0)
-        self.network[1].append(newneuron)
-        self.neuronNames = []
+            layer0.append(newneuron)
+        newneuron = Neuron(problem.inputSize(), 1, 0)
+        x = [newneuron]
+        self.network = [ layer0, x ]
+        #self.network[1].append(newneuron)
+       # print("NETWORK")
+        #print(self.network)
+        #print ("\n \n \n")
+        #print (self.network[0])
+        #print ("\n \n \n")
+        #print (self.network[0][0])
+        self.neuronNames = [x for x in range(problem.inputSize() +1)]
 
     def runNetwork(self, problem):
         self.problem = problem
@@ -31,12 +39,11 @@ class NeatNeuralNetwork:
 
     def chooseMove(self):
         highestMoveScore = -10000
-        highestMove = null
-        for moves in problem.validMoves:
-            temp = self.calculate(problem.newStateRep() + move)
+        for moves in self.problem.validMoves():
+            temp = self.calculate(self.problem.newStateRep() + moves)
             if temp > highestMoveScore:
                 highestMoveScore = temp
-                highestMove = move
+                highestMove = moves
         return highestMove
 
     def checkZeros(self, values):
@@ -46,27 +53,25 @@ class NeatNeuralNetwork:
         return True
 
     def makeMove(self, move):
-        problem.makeMove(move)
+        self.problem.makeMove(move)
         return
 
     # calculates the value of each neuron and passes it to the next layer
     # returns the value of the last layer of neurons
     def calculate(self, stateMove):
         self.zeroLayer(stateMove)
-        values = []
         for i in range(len(self.network)):
             for j in range(len(self.network[i])):
                 self.network[i][j].compute()
                 self.network[i][j].share()
-        for j in range(len(self.network[-1])):
-            values.append(self.network[-1][j].getValue())
+        values = self.network[-1][0].getValue()
         return values
 
     # should go through and input the intial values
     # into the first layer of the NN
     def zeroLayer(self, stateMove):
         for i in range(len(stateMove)):
-            self.network[0][i].value[0] = stateMove[i]
+            self.network[0][i].value = stateMove[i]
         return
 
     # changes a weight to include a neuron in the middle
@@ -81,7 +86,7 @@ class NeatNeuralNetwork:
         x1, y1 = toNeuron.getNNetIndex()
         x2, y2 = fromNeuron.getNNetIndex()
         # compute elements of new neuron
-        x3 = ((x1 + x2) / 2)
+        x3 = ((x1 + x2) // 2)
         if x3 == x1:
             y3 = 0
         else:
@@ -91,19 +96,19 @@ class NeatNeuralNetwork:
         Name += 1
         # add in neuron to the right place
         if x3 == x1:
-            self.network.insert(x1 + 1, new)
+            self.network.insert(x1 + 1, [new])
         elif x3 == x2:
-            self.network.insert(x2 - 1, new)
+            self.network.insert(x2 - 1, [new])
         else:
-            self.network.insert(x3, new)
+            self.network[x3].append(new)
         # add in new weights
-        new.makeAFriend(toNeuron, index)
+        new.makeAFriendi(toNeuron, index)
         fromNeuron.makeAFriend(new)
         fromNeuron.removeNeuron(toNeuron)
         return
 
     # a method that adds a neuron that is already created to the network
-    def addNeuron(self, neuron):
+    def addNeuronN(self, neuron):
         names.append(neuron.name)
         x = neuron.nnlayer
         # check if network is long enough for x
@@ -121,10 +126,10 @@ class NeatNeuralNetwork:
         return
 
     def checkWeights(self, neuron):
-        for x in neuron.getWeights:
-            if x[0].name is not in self.neuronNames:
+        for x in neuron.getWeights():
+            if x[0].name not in self.neuronNames:
                 neuron.removeNeuron(x[0])
-        remove
+        return
 
     # adds a gene to a random neuron-neuron combination
     def addWeight(self):
@@ -132,14 +137,15 @@ class NeatNeuralNetwork:
         fromNeurons = []
         for i in range(len(self.network) - 1):
             for j in range(len(self.network[i])):
-                fromNeurons.append[self.network[i][j]]
+                fromNeurons.append(self.network[i][j])
+        fromNeuron = r.choice(fromNeurons)
         # get to neuron
         toNeurons = []
-        for i in range(1, len(self.network)):
+        for i in range(fromNeuron.nnlayer, len(self.network)):
             for j in range(len(self.network[i])):
-                toNeurons.append[self.network[i][j]]
+                toNeurons.append(self.network[i][j])
         # generate weight
-        fromNeuron = r.choice(fromNeuron)
+        
         toNeuron = r.choice(toNeurons)
         fromNeuron.makeAFriend(toNeuron)
         return
@@ -154,8 +160,10 @@ class NeatNeuralNetwork:
     # determines of a mutation should occur and if so,
     # which mutation should happen
     def mutate(self):
+        #print(self.network)
+        #print("")
         rand = r.uniform(0, 10)
-        if rand < 2:
+        if (rand < 2) and (len(self.getWeights()) != 0):
             self.addNeuron()
         elif rand < 5:
             self.addWeight()
@@ -182,9 +190,11 @@ class NeatNeuralNetwork:
     # going node skipping the last layer
     def getWeights(self):
         ret = []
-        for layer in self.network:
-            for node in layer:
-                for w in node.getWeights:
+        for i in range(len(self.network) - 1):
+            #print("NW i")
+            #print(self.network[i])
+            for j in range(len(self.network[i])):
+                for w in self.network[i][j].getWeights():
                     ret.append(w)
         return ret
 

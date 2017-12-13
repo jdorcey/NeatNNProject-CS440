@@ -6,11 +6,12 @@ Created on Sat Dec  2 13:33:44 2017
 """
 import copy
 import time
-
+from NeatNN import NeatNeuralNetwork
 
 class Neat:
     def __init__(self, problem):
-        global Name = 0
+        global Name
+        Name = 0
         self.problem = problem
         self.networks = []
         self.results = []
@@ -21,14 +22,15 @@ class Neat:
         # generate a new population of networks
         self.generateInitalPopulation()
         # train until a champion hits optimal fitness
-        while self.chooseChampion.fitness != problem.getOptimal():
+        while self.chooseChampion().fitness() != self.problem.getOptimal():
             # print out the results of the last iteration
+            #print ("here")
             startTime = time.time()
             self.runNetworks()
             endTime = time.time()
             self.breedNetworks()
-            print("{}{}".format(self.networks[0].fitness, endTime - startTime))
-            results.append([self.networks[0].fitness, endTime - startTime])
+            print("{}   {}".format(self.networks[0].fitness(), endTime - startTime))
+            self.results.append([self.networks[0].fitness(), endTime - startTime])
         return results
 
     # This method is for testing the current champion
@@ -43,7 +45,7 @@ class Neat:
     # TODO make this concurrent
     def runNetworks(self):
         for net in self.networks:
-            net.runNetwork(copy.deepcopy(problem))
+            net.runNetwork(copy.deepcopy(self.problem))
         return
 
     # this method is resposible for breeding all the current networks
@@ -56,7 +58,7 @@ class Neat:
             for i in range(1, len(self.networks)):
                 self.breedTwo(0, i)
         # mutate all current networks 3 times
-        self.mutateNetworks(3)
+        self.mutateNetworks(6)
         return
 
     # this method removes the lower half of the networks
@@ -67,16 +69,15 @@ class Neat:
             if net.fitness() == 0:
                 self.networks.remove(net)
         self.sortNetworks()
-        if len(self.networks) > 50:
-            for i in range(50, len(self.networks)):
-                self.networks.remove(i)
+        while (len(self.networks) > 50):
+            self.networks.remove(self.networks[50])
         return
 
     # this method sorts networks based on their fitness
     # highest fitnesses have the lower indexes
     def sortNetworks(self):
-        tupleNets = [(net.fitness) for net in self.networks]
-        tupleNets.sort(key=lambda x: x[0], reverse=True)
+        tupleNets = [(net.fitness(), net) for net in self.networks]
+        tupleNets.sort(key=lambda x: x[0], reverse=True) 
         # REVIEW might need to be net[1] for net in tupleNets
         self.networks = [net for fit, net in tupleNets]
         pass
@@ -92,7 +93,7 @@ class Neat:
         newNeurons = newNeurons + self.getNeurons(self.networks[indexTwo], newNeurons)
         # add neurons to network
         for neuron in newNeurons:
-            newNetwork.addNeuron(neuron)
+            newNetwork.addNeuronN(neuron)
         # Make sure connections are valid
         newNetwork.checkConnections()
         self.networks.append(newNetwork)
@@ -102,11 +103,11 @@ class Neat:
     # ignores the first and last layers as they are special cases
     def getNeurons(self, net, new):
         for i in range(1, len(net.network) - 1):
-            for j in range(len(net.network)):
-                if self.neruonInList(net.network[i][j], newNeurons):
+            for j in range(len(net.network[i])):
+                if self.neruonInList(net.network[i][j], new):
                     if r.uniform(0, 1) < .6:
-                        newNeurons.append(net.network[i][j])
-        return newNeurons
+                        new.append(net.network[i][j])
+        return new
 
     # a helper function that checks if a neuron is in a list
     # checks based off of neurons name
@@ -129,7 +130,7 @@ class Neat:
     # so they need to be highly mutated at the start
     def generateInitalPopulation(self):
         for i in range(100):
-            newNetwork = NeatNeuralNetwork(copy.deepcopy(problem))
+            newNetwork = NeatNeuralNetwork(copy.deepcopy(self.problem))
             self.networks.append(newNetwork)
         self.mutateNetworks(10)
         return
